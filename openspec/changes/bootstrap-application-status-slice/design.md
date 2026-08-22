@@ -1,6 +1,6 @@
 ## Context
 
-See `proposal.md` for motivation and `specs/application-status/spec.md` for the behavior contract. The repository currently contains OpenSpec guidance but no application code, so this slice establishes the initial executable structure while preserving the modular-monolith direction and avoiding surf-domain placeholders.
+See `proposal.md` for motivation and `specs/application-status/spec.md` for the behavior contract. At the start of this change the repository contained OpenSpec guidance but no application code, so this slice establishes the initial executable structure while preserving the modular-monolith direction and avoiding surf-domain placeholders.
 
 The request crosses the browser, HTTP API, database, tests, and local container runtime. Those boundaries justify a design document, but not additional services or generic architectural layers.
 
@@ -11,6 +11,7 @@ The request crosses the browser, HTTP API, database, tests, and local container 
 - Prove the request path from a Vue page through FastAPI to a real PostgreSQL connection.
 - Make healthy, loading, and unavailable states explicit and testable.
 - Provide one reproducible Docker Compose workflow for local development and tests.
+- Provide a small, stable Make interface over the local workflow without moving application logic into build recipes.
 - Establish only the persistence and migration configuration needed for later vertical slices.
 - Keep failure details observable in backend logs without exposing internal errors through the API.
 
@@ -52,7 +53,7 @@ Configure Alembic to read the same `DATABASE_URL` as the application, but do not
 
 ### 5. Make Docker Compose the supported local entry point
 
-Define `frontend`, `backend`, and `db` services. PostgreSQL receives a health check, and the backend waits for that health condition before starting. The frontend proxies to the backend by its Compose service name. Source mounts and development commands provide local iteration while keeping host prerequisites limited to Docker Compose.
+Define `frontend`, `backend`, and `db` services. PostgreSQL receives a health check, and the backend waits for that health condition before starting. The frontend proxies to the backend by its Compose service name. Source mounts and development commands provide local iteration while keeping normal host prerequisites limited to Docker with Compose and Make.
 
 Environment-specific values come from environment variables. Commit only documented example values suitable for local development; never commit a populated `.env` or real credentials. Caddy and production container orchestration remain deferred.
 
@@ -68,7 +69,23 @@ Use Bun and its lockfile for frontend dependencies. Use pinned pip requirement f
 
 Use pytest to exercise the FastAPI contract. The healthy integration test uses the Compose PostgreSQL service so the real SQLAlchemy connection path is covered; the unavailable case substitutes only the concrete connectivity boundary. Use Vitest and Vue Test Utils to verify loading, healthy, malformed, non-success, and network-failure states by controlling `fetch`. Do not add Playwright or another browser test framework for this slice.
 
-Document commands that run both suites through Docker Compose. The manual acceptance check is opening the frontend from a healthy Compose stack and observing `alerts.surf is running`.
+Expose a `make test` command that runs both suites through Docker Compose. The manual acceptance check is opening the frontend from a healthy Compose stack and observing `alerts.surf is running`.
+
+### 8. Use Make as a thin local-development interface
+
+Add one root `Makefile` with phony targets and no application logic. Its recipes delegate directly to Docker Compose or to the already-defined commands inside the service containers:
+
+- `make up` builds the images and starts the stack in detached mode, waiting for service health.
+- `make down` stops and removes the local service containers and network while retaining named volumes.
+- `make logs` follows the Compose logs for the stack until interrupted.
+- `make ps` displays the Compose service status.
+- `make test` runs pytest in the backend container and Vitest in the frontend container; it does not require host Python or Bun.
+- `make clean` brings the project down and removes its named volumes and orphaned containers, including local PostgreSQL data.
+- `make bootstrap` copies `.env.example` to `.env` only when `.env` is absent, then delegates to `make up`. An existing `.env` remains byte-for-byte unchanged.
+
+The Makefile uses the root `.env` for Compose commands after bootstrap. `.env.example` remains version-controlled documentation with non-secret local defaults, while `.env` and other local environment variants remain ignored. The ignore file also excludes generated Python, Node/Bun, operating-system, and common IDE files without excluding project configuration such as `AGENTS.md`, `openspec/`, `.agents/`, `bun.lock`, `compose.yaml`, or the Makefile itself.
+
+**Alternatives considered:** Repeating full Compose commands only in documentation provides no stable shorthand. Installing Bun or Python on the host duplicates the container toolchain. A task runner dependency or separate shell scripts would add machinery without improving these seven small commands.
 
 ## Risks / Trade-offs
 
@@ -77,10 +94,12 @@ Document commands that run both suites through Docker Compose. The manual accept
 - **The Vite proxy is development-specific** → Keep the browser contract at relative `/api`; a future deployment spec can map that path through Caddy without changing frontend behavior.
 - **Synchronous database access is not the likely final choice for every workload** → Limit the decision to this status slice and revisit when a real feature demonstrates concurrency needs.
 - **No migration is produced by the initial Alembic setup** → Verify Alembic can load its configuration; require the first persisted feature to add the initial meaningful revision.
+- **`make clean` is intentionally destructive to local named volumes** → Name this behavior explicitly in help documentation and reserve `make down` for the non-destructive shutdown path.
+- **Make recipes rely on a POSIX-style shell and a current Docker Compose v2 plugin** → Document the requirement; on native Windows the supported path is an environment such as WSL that provides Make and POSIX command semantics.
 
 ## Migration Plan
 
-There is no existing application or data to migrate. Implementation adds the bootstrap files, validates both test suites, starts the Compose stack, and checks the documented browser behavior. Rollback consists of stopping the Compose stack and reverting the bootstrap change; the local PostgreSQL volume may be removed explicitly if the developer no longer needs its empty data directory.
+There is no existing application or data to migrate. Implementation adds the bootstrap files and root Makefile, validates both test suites, starts the Compose stack, and checks the documented browser behavior. Rollback consists of stopping the Compose stack and reverting the bootstrap change; `make clean` may remove the local PostgreSQL volume explicitly when the developer no longer needs its local data.
 
 ## Decisions Requiring Review
 
@@ -88,3 +107,5 @@ There is no existing application or data to migrate. Implementation adds the boo
 - Confirm the exact `200`/`503` API contract and the three user-visible messages defined in the spec.
 - Confirm that Alembic should be configured without an initial empty migration or placeholder model.
 - Confirm pinned pip requirement files as the initial Python dependency workflow; no additional Python package manager is proposed.
+- Confirm that `make up` runs detached and waits for health, while `make logs` follows all Compose service logs.
+- Confirm that the deliberately destructive contract of `make clean` includes removal of the project PostgreSQL volume.

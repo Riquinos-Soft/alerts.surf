@@ -4,25 +4,24 @@ alerts.surf currently contains one small vertical slice that proves the local Vu
 
 ## Requirements
 
-Only Docker with Docker Compose is required on the host.
+The normal local workflow requires:
 
-## Configure local development
+- Docker with a current Docker Compose v2 plugin.
+- Make with POSIX shell semantics.
 
-Create a local environment file from the committed example:
-
-```sh
-cp .env.example .env
-```
-
-The example values are for local development only. `.env` is ignored by Git and must not contain credentials used by another environment.
+Python and Bun run inside containers and are not required on the host. On native Windows, use an environment such as WSL that provides Make and POSIX command semantics.
 
 ## Start the application
 
-Build the images, start all three services, and wait for their health checks:
+Prepare the local environment, build the images, and start all three services:
 
 ```sh
-docker compose up --detach --build --wait
+make bootstrap
 ```
+
+On the first run, this copies `.env.example` to `.env`. It never overwrites an existing `.env`. The example values are for local development only; `.env` is ignored by Git and must not contain credentials used by another environment.
+
+`make bootstrap` delegates to `make up`, which starts the stack in detached mode and waits for the service health checks.
 
 Open <http://localhost:5173>. When the backend and PostgreSQL are healthy, the page displays:
 
@@ -32,37 +31,34 @@ alerts.surf is running
 
 The status API is available directly at <http://localhost:8000/api/status> and through the frontend development proxy at <http://localhost:5173/api/status>.
 
-Inspect the running services with:
+## Local commands
 
-```sh
-docker compose ps
-```
+| Command | Behavior |
+| --- | --- |
+| `make bootstrap` | Creates `.env` only when absent, then builds and starts the stack. |
+| `make up` | Builds and starts the stack in detached mode, waiting for health checks. |
+| `make down` | Stops and removes containers and the project network while retaining named volumes. |
+| `make logs` | Follows logs from all Compose services until interrupted. |
+| `make ps` | Shows the current Compose service status. |
+| `make test` | Runs the backend pytest suite and frontend Vitest suite inside containers. |
+| `make clean` | Stops the stack and removes project containers, orphaned containers, networks, and named volumes. |
+
+`make clean` is destructive: it removes the local PostgreSQL data volume. Use `make down` for the normal volume-preserving shutdown.
 
 ## Run checks
 
-Validate the resolved Compose configuration:
+Run both automated test suites:
 
 ```sh
-docker compose config --quiet
+make test
 ```
 
-Run the backend tests against the Compose PostgreSQL service:
+Additional focused checks remain available through the containerized tooling:
 
 ```sh
-docker compose run --rm backend pytest --quiet
-```
-
-Verify Alembic can connect without any current migration revision:
-
-```sh
-docker compose run --rm backend alembic current
-```
-
-Run the frontend type check and tests:
-
-```sh
-docker compose run --rm --no-deps frontend bun run type-check
-docker compose run --rm --no-deps frontend bun run test
+docker compose --env-file .env config --quiet
+docker compose --env-file .env run --rm backend alembic current
+docker compose --env-file .env run --rm --no-deps frontend bun run type-check
 ```
 
 ## Reproduce the unavailable state
@@ -72,20 +68,20 @@ This procedure stops PostgreSQL alone. It deliberately keeps the existing fronte
 1. Start the healthy stack and confirm all three services are healthy:
 
    ```sh
-   docker compose up --detach --build --wait
-   docker compose ps
+   make up
+   make ps
    ```
 
 2. Stop only PostgreSQL:
 
    ```sh
-   docker compose stop db
+   docker compose --env-file .env stop db
    ```
 
 3. Confirm the frontend and backend containers are still running:
 
    ```sh
-   docker compose ps frontend backend
+   docker compose --env-file .env ps frontend backend
    ```
 
    The backend may become `unhealthy` because its status endpoint now returns `503`, but its container remains running.
@@ -112,8 +108,8 @@ This procedure stops PostgreSQL alone. It deliberately keeps the existing fronte
 6. Start PostgreSQL again without recreating the frontend or backend, wait for database health, and refresh the browser:
 
    ```sh
-   docker compose up --detach --wait db
-   docker compose ps
+   docker compose --env-file .env up --detach --wait db
+   make ps
    ```
 
    The page returns to `alerts.surf is running`.
@@ -123,23 +119,29 @@ This procedure stops PostgreSQL alone. It deliberately keeps the existing fronte
 Stop and remove the containers while preserving the local database volume:
 
 ```sh
-docker compose down
+make down
 ```
 
-To intentionally remove the local database volume as well:
+To intentionally remove all project volumes, including local PostgreSQL data:
 
 ```sh
-docker compose down --volumes
+make clean
 ```
 
 ## Troubleshooting
 
-Inspect service logs with:
+Follow all service logs with:
 
 ```sh
-docker compose logs backend
-docker compose logs frontend
-docker compose logs db
+make logs
 ```
 
-If the page reports that alerts.surf is unavailable, first check `docker compose ps` and the backend/database logs. The API never returns raw database connection details.
+For one service at a time, use Compose directly:
+
+```sh
+docker compose --env-file .env logs backend
+docker compose --env-file .env logs frontend
+docker compose --env-file .env logs db
+```
+
+If the page reports that alerts.surf is unavailable, first run `make ps` and inspect the backend/database logs. The API never returns raw database connection details.
