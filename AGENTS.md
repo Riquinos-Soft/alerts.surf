@@ -53,6 +53,13 @@ These future capabilities must not be implemented until they are explicitly spec
 
 - Keep observability, failure handling, and idempotency in mind for integrations and background work.
 
+## Version control
+
+- When a coherent, independently reviewable unit of work is complete and verified, create a focused atomic commit containing only that unit.
+- Push each completed atomic commit to the configured GitHub remote unless the active spec or the user explicitly requires stopping before publication.
+- Inspect the staged diff before committing, and never include unrelated changes, secrets, credentials, or local-only files.
+- Do not create checkpoint commits for incomplete work or work with failing required checks.
+
 ## Agent workflow
 
 1. Read `AGENTS.md`.
@@ -61,5 +68,6 @@ These future capabilities must not be implemented until they are explicitly spec
 4. Propose a short implementation plan.
 5. Implement only the requested scope.
 6. Run tests and linting.
-7. Report changed files and relevant decisions.
-8. Stop and wait for review.
+7. Create and push a focused atomic commit for the completed unit unless explicitly instructed not to publish it.
+8. Report changed files, checks, commit, and relevant decisions.
+9. Stop and wait for review.
