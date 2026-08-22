@@ -19,5 +19,11 @@
 ## 4. Integrated Acceptance and Developer Handoff
 
 - [x] 4.1 Complete Compose startup dependencies, PostgreSQL health checking, service networking, ports, and source mounts; verify a clean `docker compose up --build` starts all three services and `GET /api/status` returns the healthy contract.
-- [x] 4.2 Add concise developer instructions for configuration, startup, test commands, browser URL, shutdown, and troubleshooting the unavailable state; verify every documented command matches the Compose workflow and requires no host runtime beyond Docker Compose.
+- [x] 4.2 Add concise developer instructions for configuration, startup, test commands, browser URL, shutdown, and troubleshooting the unavailable state; verify every documented command matches the Compose workflow and requires no host Python or Bun runtime.
 - [x] 4.3 Run the backend tests, frontend type check, frontend tests, Compose configuration validation, and the manual healthy browser acceptance check; then stop PostgreSQL and verify the API returns `503` and the reachable frontend displays `alerts.surf is unavailable`.
+
+## 5. Stable Local Commands
+
+- [ ] 5.1 Add a small root `Makefile` with phony `up`, `down`, `logs`, `ps`, `test`, and `clean` targets that delegate to Docker Compose and the existing containerized test commands; verify each target invokes the behavior defined in the capability spec without requiring host Python or Bun.
+- [ ] 5.2 Add `make bootstrap` so a missing `.env` is copied from `.env.example` before delegating to `make up`; verify on a fresh checkout that the files initially match, and verify separately that rerunning bootstrap leaves the checksum of an existing `.env` unchanged.
+- [ ] 5.3 Update the developer instructions to use the Make targets as the primary workflow and clearly distinguish volume-preserving `make down` from destructive `make clean`; run `make bootstrap`, `make ps`, `make test`, `make down`, and `make clean`, and confirm `.env.example` plus project configuration remain versionable while local-only files remain ignored.
