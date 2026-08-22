@@ -24,6 +24,6 @@
 
 ## 5. Stable Local Commands
 
-- [ ] 5.1 Add a small root `Makefile` with phony `up`, `down`, `logs`, `ps`, `test`, and `clean` targets that delegate to Docker Compose and the existing containerized test commands; verify each target invokes the behavior defined in the capability spec without requiring host Python or Bun.
-- [ ] 5.2 Add `make bootstrap` so a missing `.env` is copied from `.env.example` before delegating to `make up`; verify on a fresh checkout that the files initially match, and verify separately that rerunning bootstrap leaves the checksum of an existing `.env` unchanged.
-- [ ] 5.3 Update the developer instructions to use the Make targets as the primary workflow and clearly distinguish volume-preserving `make down` from destructive `make clean`; run `make bootstrap`, `make ps`, `make test`, `make down`, and `make clean`, and confirm `.env.example` plus project configuration remain versionable while local-only files remain ignored.
+- [x] 5.1 Add a small root `Makefile` with phony `up`, `down`, `logs`, `ps`, `test`, and `clean` targets that delegate to Docker Compose and the existing containerized test commands; verify each target invokes the behavior defined in the capability spec without requiring host Python or Bun.
+- [x] 5.2 Add `make bootstrap` so a missing `.env` is copied from `.env.example` before delegating to `make up`; verify on a fresh checkout that the files initially match, and verify separately that rerunning bootstrap leaves the checksum of an existing `.env` unchanged.
+- [x] 5.3 Update the developer instructions to use the Make targets as the primary workflow and clearly distinguish volume-preserving `make down` from destructive `make clean`; run `make bootstrap`, `make ps`, `make test`, `make down`, and `make clean`, and confirm `.env.example` plus project configuration remain versionable while local-only files remain ignored.
