@@ -1,0 +1,41 @@
+schema: spec-driven
+
+context: |
+  alerts.surf is a surf conditions and alerting platform.
+
+  Agreed initial technical direction:
+  - Frontend: Vue 3, Vite, and TypeScript.
+  - PWA support will be added only when explicitly required.
+  - Backend: Python with FastAPI.
+  - Database: PostgreSQL.
+  - Persistence: SQLAlchemy 2 and Alembic.
+  - Backend HTTP integrations: httpx.
+  - Backend testing: pytest.
+  - Frontend testing: Vitest.
+  - JavaScript and TypeScript package manager: Bun.
+  - Local infrastructure: Docker Compose.
+  - Production deployment target: a single DigitalOcean droplet using containers.
+  - Reverse proxy: Caddy.
+  - CI/CD: GitHub Actions.
+  - Initial architecture: modular monolith.
+  - Backend modules may use domain, application, and infrastructure layers when justified by the active feature.
+  - Do not create empty bounded contexts or architectural layers preemptively.
+  - External providers must be isolated behind adapters.
+  - Redis, queues, pgvector, LangGraph, RAG, microservices, and Kubernetes are out of scope until a future spec explicitly requires them.
+
+rules:
+  specs:
+    - Specifications should favor vertical slices that produce usable product behavior.
+    - Avoid technology-oriented specs such as "create database layer" when the same work can belong to a user-facing vertical slice.
+
+  design:
+    - New infrastructure must be justified by the capability being implemented.
+    - Prefer the simplest deployable solution compatible with future evolution.
+
+  testing:
+    - Every vertical slice must include automated tests for its meaningful behavior.
+    - Prefer integration tests at module boundaries over excessive mocking.
+
+  architecture:
+    - Significant architectural decisions must be surfaced for review before implementation.
+    - Do not introduce generic repositories, service abstractions, or shared layers unless current requirements justify them.
