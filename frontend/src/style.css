@@ -28,17 +28,23 @@ select {
 .status-page {
   display: grid;
   min-height: 100vh;
-  place-items: center;
+  align-content: center;
+  justify-items: center;
+  gap: 1.5rem;
   padding: 1.5rem;
 }
 
-.status-card {
+.status-card,
+.spots-card {
   width: min(100%, 32rem);
-  padding: clamp(2rem, 8vw, 4rem);
+  padding: clamp(2rem, 8vw, 3.5rem);
   border: 1px solid rgb(18 50 58 / 12%);
   border-radius: 1.5rem;
   background: rgb(255 255 255 / 82%);
   box-shadow: 0 1.5rem 4rem rgb(18 50 58 / 10%);
+}
+
+.status-card {
   text-align: center;
 }
 
@@ -58,8 +64,52 @@ h1 {
   letter-spacing: -0.06em;
 }
 
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+  color: #0b5965;
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  letter-spacing: -0.04em;
+}
+
 .status-message {
   margin: 1.5rem 0 0;
   font-size: clamp(1rem, 3vw, 1.25rem);
   font-weight: 600;
+}
+
+.catalog-content > p {
+  margin-bottom: 0;
+  color: #315b63;
+  font-weight: 600;
+}
+
+.spot-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spot-item {
+  padding: 1rem 1.125rem;
+  border-radius: 0.875rem;
+  background: #eaf5f3;
+}
+
+.spot-item h3 {
+  margin-bottom: 0.25rem;
+  color: #12323a;
+  font-size: 1.125rem;
+}
+
+.spot-item p {
+  margin-bottom: 0;
+  color: #39717c;
 }

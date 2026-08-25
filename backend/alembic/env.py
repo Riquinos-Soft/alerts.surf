@@ -2,8 +2,10 @@ from alembic import context
 from sqlalchemy import create_engine, pool
 
 from app.config import DATABASE_URL
+from app.database import Base
+from app.spots import SurfSpot
 
-target_metadata = None
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:

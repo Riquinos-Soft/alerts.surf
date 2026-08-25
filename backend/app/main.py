@@ -4,8 +4,10 @@ from fastapi import Depends, FastAPI, Response, status
 from pydantic import BaseModel
 
 from app.database import is_database_available
+from app.spots import router as spots_router
 
 app = FastAPI(title="alerts.surf")
+app.include_router(spots_router)
 
 
 class ApplicationStatus(BaseModel):

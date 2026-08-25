@@ -10,89 +10,212 @@ function createResponse(ok: boolean, body: unknown): Response {
   } as unknown as Response
 }
 
+type FetchResult = Response | Promise<Response> | Error
+
+const healthyStatus = createResponse(true, {
+  status: 'ok',
+  database: 'ok',
+})
+
+const emptyCatalog = createResponse(true, { spots: [] })
+
+function stubFetch(routes: Record<string, FetchResult>) {
+  const fetchMock = vi.fn((input: RequestInfo | URL) => {
+    const result = routes[String(input)]
+
+    if (result instanceof Error) {
+      return Promise.reject(result)
+    }
+
+    return Promise.resolve(result)
+  })
+
+  vi.stubGlobal('fetch', fetchMock)
+  return fetchMock
+}
+
 describe('App', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
   })
 
-  it('shows the loading state while the request is pending', async () => {
-    let resolveRequest!: (response: Response) => void
-    const pendingRequest = new Promise<Response>((resolve) => {
-      resolveRequest = resolve
+  it('shows the application loading state while its request is pending', async () => {
+    let resolveStatus!: (response: Response) => void
+    const pendingStatus = new Promise<Response>((resolve) => {
+      resolveStatus = resolve
     })
-    vi.stubGlobal('fetch', vi.fn(() => pendingRequest))
+    stubFetch({
+      '/api/status': pendingStatus,
+      '/api/spots': emptyCatalog,
+    })
 
     const wrapper = mount(App)
 
-    expect(wrapper.get('[role="status"]').text()).toBe(
+    expect(wrapper.get('.status-message').text()).toBe(
       'Checking alerts.surf status...',
     )
 
-    resolveRequest(
-      createResponse(true, {
-        status: 'ok',
-        database: 'ok',
-      }),
-    )
+    resolveStatus(healthyStatus)
     await flushPromises()
   })
 
   it('shows the running state for a healthy response', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      createResponse(true, {
-        status: 'ok',
-        database: 'ok',
-      }),
-    )
-    vi.stubGlobal('fetch', fetchMock)
+    const fetchMock = stubFetch({
+      '/api/status': healthyStatus,
+      '/api/spots': emptyCatalog,
+    })
 
     const wrapper = mount(App)
     await flushPromises()
 
     expect(fetchMock).toHaveBeenCalledWith('/api/status')
-    expect(wrapper.get('[role="status"]').text()).toBe(
+    expect(wrapper.get('.status-message').text()).toBe(
       'alerts.surf is running',
     )
   })
 
-  it('shows the unavailable state for a non-success response', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(createResponse(false, {})))
+  it('shows the application unavailable state for a non-success response', async () => {
+    stubFetch({
+      '/api/status': createResponse(false, {}),
+      '/api/spots': emptyCatalog,
+    })
 
     const wrapper = mount(App)
     await flushPromises()
 
-    expect(wrapper.get('[role="status"]').text()).toBe(
+    expect(wrapper.get('.status-message').text()).toBe(
       'alerts.surf is unavailable',
     )
   })
 
-  it('shows the unavailable state for a malformed response', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        createResponse(true, {
-          status: 'ok',
-          database: 'unavailable',
-        }),
-      ),
-    )
+  it('shows the application unavailable state for a malformed response', async () => {
+    stubFetch({
+      '/api/status': createResponse(true, {
+        status: 'ok',
+        database: 'unavailable',
+      }),
+      '/api/spots': emptyCatalog,
+    })
 
     const wrapper = mount(App)
     await flushPromises()
 
-    expect(wrapper.get('[role="status"]').text()).toBe(
+    expect(wrapper.get('.status-message').text()).toBe(
       'alerts.surf is unavailable',
     )
   })
 
-  it('shows the unavailable state for a network failure', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')))
+  it('shows the application unavailable state for a network failure', async () => {
+    stubFetch({
+      '/api/status': new Error('Network error'),
+      '/api/spots': emptyCatalog,
+    })
 
     const wrapper = mount(App)
     await flushPromises()
 
-    expect(wrapper.get('[role="status"]').text()).toBe(
+    expect(wrapper.get('.status-message').text()).toBe(
       'alerts.surf is unavailable',
+    )
+  })
+
+  it('shows the catalog loading state while its request is pending', async () => {
+    let resolveCatalog!: (response: Response) => void
+    const pendingCatalog = new Promise<Response>((resolve) => {
+      resolveCatalog = resolve
+    })
+    stubFetch({
+      '/api/status': healthyStatus,
+      '/api/spots': pendingCatalog,
+    })
+
+    const wrapper = mount(App)
+
+    expect(wrapper.get('.catalog-content [role="status"]').text()).toBe(
+      'Loading surf spots...',
+    )
+
+    resolveCatalog(emptyCatalog)
+    await flushPromises()
+  })
+
+  it('shows every spot from a populated catalog in response order', async () => {
+    const fetchMock = stubFetch({
+      '/api/status': healthyStatus,
+      '/api/spots': createResponse(true, {
+        spots: [
+          { name: 'Mundaka', region: 'Bizkaia', country_code: 'ES' },
+          { name: 'Pantín', region: 'A Coruña', country_code: 'ES' },
+        ],
+      }),
+    })
+
+    const wrapper = mount(App)
+    await flushPromises()
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/spots')
+    expect(wrapper.get('#spots-title').text()).toBe('Surf spots')
+    expect(wrapper.findAll('.spot-item').map((item) => item.text())).toEqual([
+      'MundakaBizkaia · ES',
+      'PantínA Coruña · ES',
+    ])
+  })
+
+  it('shows the empty catalog state', async () => {
+    stubFetch({
+      '/api/status': healthyStatus,
+      '/api/spots': emptyCatalog,
+    })
+
+    const wrapper = mount(App)
+    await flushPromises()
+
+    expect(wrapper.get('.catalog-content [role="status"]').text()).toBe(
+      'No surf spots available',
+    )
+  })
+
+  it('shows the catalog unavailable state for a non-success response', async () => {
+    stubFetch({
+      '/api/status': healthyStatus,
+      '/api/spots': createResponse(false, {}),
+    })
+
+    const wrapper = mount(App)
+    await flushPromises()
+
+    expect(wrapper.get('.catalog-content [role="status"]').text()).toBe(
+      'Surf spots are unavailable',
+    )
+  })
+
+  it('shows the catalog unavailable state for a malformed response', async () => {
+    stubFetch({
+      '/api/status': healthyStatus,
+      '/api/spots': createResponse(true, {
+        spots: [{ name: 'Mundaka', region: 'Bizkaia', country_code: 'es' }],
+      }),
+    })
+
+    const wrapper = mount(App)
+    await flushPromises()
+
+    expect(wrapper.get('.catalog-content [role="status"]').text()).toBe(
+      'Surf spots are unavailable',
+    )
+  })
+
+  it('shows the catalog unavailable state for a network failure', async () => {
+    stubFetch({
+      '/api/status': healthyStatus,
+      '/api/spots': new Error('Network error'),
+    })
+
+    const wrapper = mount(App)
+    await flushPromises()
+
+    expect(wrapper.get('.catalog-content [role="status"]').text()).toBe(
+      'Surf spots are unavailable',
     )
   })
 })

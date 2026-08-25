@@ -1,7 +1,9 @@
 import logging
+from collections.abc import Iterator
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config import DATABASE_URL
 
@@ -13,6 +15,18 @@ engine = create_engine(
     pool_timeout=2,
     connect_args={"connect_timeout": 2},
 )
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+
+
+def get_session() -> Iterator[Session]:
+    with SessionLocal() as session:
+        yield session
 
 
 def is_database_available() -> bool:

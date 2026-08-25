@@ -1,6 +1,6 @@
 # alerts.surf
 
-alerts.surf currently contains one small vertical slice that proves the local Vue frontend, FastAPI backend, and PostgreSQL database work together.
+alerts.surf currently contains two small vertical slices: integrated application health and a public read-only catalog of surf spots persisted in PostgreSQL.
 
 ## Requirements
 
@@ -21,7 +21,7 @@ make bootstrap
 
 On the first run, this copies `.env.example` to `.env`. It never overwrites an existing `.env`. The example values are for local development only; `.env` is ignored by Git and must not contain credentials used by another environment.
 
-`make bootstrap` delegates to `make up`, which starts the stack in detached mode and waits for the service health checks.
+`make bootstrap` starts the stack, applies database migrations, and loads deterministic development-only sample spots. Running it again preserves `.env` and does not duplicate sample data.
 
 Open <http://localhost:5173>. When the backend and PostgreSQL are healthy, the page displays:
 
@@ -29,18 +29,20 @@ Open <http://localhost:5173>. When the backend and PostgreSQL are healthy, the p
 alerts.surf is running
 ```
 
-The status API is available directly at <http://localhost:8000/api/status> and through the frontend development proxy at <http://localhost:5173/api/status>.
+The same screen displays the local surf-spot catalog with Mundaka and Pantín. The APIs are available directly at <http://localhost:8000/api/status> and <http://localhost:8000/api/spots>, and through the frontend development proxy under the same `/api` paths at <http://localhost:5173>.
 
 ## Local commands
 
 | Command | Behavior |
 | --- | --- |
-| `make bootstrap` | Creates `.env` only when absent, then builds and starts the stack. |
+| `make bootstrap` | Creates `.env` only when absent, starts the stack, applies migrations, and loads development sample spots idempotently. |
 | `make up` | Builds and starts the stack in detached mode, waiting for health checks. |
 | `make down` | Stops and removes containers and the project network while retaining named volumes. |
 | `make logs` | Follows logs from all Compose services until interrupted. |
 | `make ps` | Shows the current Compose service status. |
-| `make test` | Runs the backend pytest suite and frontend Vitest suite inside containers. |
+| `make migrate` | Applies all pending Alembic migrations through the backend container. |
+| `make seed` | Idempotently loads the development-only Mundaka and Pantín samples. |
+| `make test` | Applies migrations, then runs the backend pytest and frontend Vitest suites inside containers. |
 | `make clean` | Stops the stack and removes project containers, orphaned containers, networks, and named volumes. |
 
 `make clean` is destructive: it removes the local PostgreSQL data volume. Use `make down` for the normal volume-preserving shutdown.
@@ -60,6 +62,29 @@ docker compose --env-file .env config --quiet
 docker compose --env-file .env run --rm backend alembic current
 docker compose --env-file .env run --rm --no-deps frontend bun run type-check
 ```
+
+## Surf spot catalog
+
+The catalog is public and read-only. A successful request returns spots ordered by name and region:
+
+```sh
+curl http://localhost:8000/api/spots
+```
+
+After local bootstrap, the response is:
+
+```json
+{"spots":[{"name":"Mundaka","region":"Bizkaia","country_code":"ES"},{"name":"Pantín","region":"A Coruña","country_code":"ES"}]}
+```
+
+Schema migrations never insert sample content. `make seed` is the explicit development-only operation and can be repeated safely. To recreate the complete local database from scratch, run:
+
+```sh
+make clean
+make bootstrap
+```
+
+`make clean` deletes the local PostgreSQL volume; do not use it when you need to preserve local data.
 
 ## Reproduce the unavailable state
 
@@ -112,7 +137,7 @@ This procedure stops PostgreSQL alone. It deliberately keeps the existing fronte
    make ps
    ```
 
-   The page returns to `alerts.surf is running`.
+   The page returns to `alerts.surf is running` and displays the surf-spot catalog again.
 
 ## Stop the application
 
@@ -144,4 +169,4 @@ docker compose --env-file .env logs frontend
 docker compose --env-file .env logs db
 ```
 
-If the page reports that alerts.surf is unavailable, first run `make ps` and inspect the backend/database logs. The API never returns raw database connection details.
+If the page reports that alerts.surf or the surf-spot catalog is unavailable, first run `make ps` and inspect the backend/database logs. Run `make migrate` if the database schema has not been prepared. The APIs never return raw database connection details.
