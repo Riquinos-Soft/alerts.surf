@@ -31,11 +31,9 @@ rules:
   design:
     - New infrastructure must be justified by the capability being implemented.
     - Prefer the simplest deployable solution compatible with future evolution.
-
-  testing:
-    - Every vertical slice must include automated tests for its meaningful behavior.
-    - Prefer integration tests at module boundaries over excessive mocking.
-
-  architecture:
     - Significant architectural decisions must be surfaced for review before implementation.
     - Do not introduce generic repositories, service abstractions, or shared layers unless current requirements justify them.
+
+  tasks:
+    - Every vertical slice must include automated tests for its meaningful behavior.
+    - Prefer integration tests at module boundaries over excessive mocking.
