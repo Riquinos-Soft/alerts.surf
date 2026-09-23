@@ -1,0 +1,81 @@
+name: Checks and production deployment
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Tests, types and production acceptance
+        run: bash deploy/check.sh
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: production
+    concurrency:
+      group: alerts-surf-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Skip superseded main revisions
+        id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$current" = "$GITHUB_SHA" ]; then
+            echo 'deploy=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Deploy exact tested revision
+        if: steps.latest.outputs.deploy == 'true'
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOY_HOST" && test -n "$DEPLOY_USER"
+          test -n "$DEPLOY_SSH_KEY" && test -n "$DEPLOY_KNOWN_HOSTS"
+          [[ "$DEPLOY_HOST" =~ ^[a-zA-Z0-9.-]+$ ]]
+          [[ "$DEPLOY_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/deploy"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/deploy" "$HOME/.ssh/known_hosts"
+          trap 'rm -f "$HOME/.ssh/deploy"' EXIT
+          remote="$DEPLOY_USER@$DEPLOY_HOST"
+          options=(-i "$HOME/.ssh/deploy" -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15)
+          git archive --format=tar.gz --output=release.tar.gz "$GITHUB_SHA"
+          ssh "${options[@]}" "$remote" 'mkdir -p /opt/alerts.surf/incoming /opt/alerts.surf/releases'
+          scp "${options[@]}" release.tar.gz "$remote:/opt/alerts.surf/incoming/$GITHUB_SHA.tar.gz"
+          # Expand the trusted GitHub commit on the runner, not on the server.
+          # shellcheck disable=SC2029
+          ssh "${options[@]}" "$remote" "bash -s -- $GITHUB_SHA" <<'REMOTE'
+          set -euo pipefail
+          revision=$1
+          [[ "$revision" =~ ^[0-9a-f]{40}$ ]]
+          release="/opt/alerts.surf/releases/$revision"
+          if [ ! -d "$release" ]; then
+            staging=$(mktemp -d /opt/alerts.surf/releases/.upload-XXXXXXXX)
+            tar -xzf "/opt/alerts.surf/incoming/$revision.tar.gz" -C "$staging"
+            mv "$staging" "$release"
+          fi
+          bash "$release/deploy/deploy.sh" "$revision"
+          REMOTE
