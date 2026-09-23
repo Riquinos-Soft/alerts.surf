@@ -28,22 +28,30 @@ function triggerVoiceSimulation() {
       <div class="showcase-grid">
         <!-- Pillar 1: Wave Physics & Scoring -->
         <article class="glass-panel showcase-card feature-wide" aria-labelledby="pillar-physics">
-          <div class="card-icon" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0df2c9" stroke-width="2">
-              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
+          <div class="feature-img-wrap">
+            <img
+              src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80"
+              alt="Powerful ocean swell barrel"
+              class="feature-img"
+              loading="lazy"
+            />
           </div>
           <div class="card-text">
+            <div class="card-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0077b6" stroke-width="2">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </div>
             <h3 id="pillar-physics" class="card-heading">Condition Scoring That Actually Works</h3>
             <p class="card-desc">
               No generic stars based solely on offshore wave height. alerts.surf correlates bathymetry,
               primary and secondary swell vectors, and tide levels into an honest 0-10 session score.
             </p>
             <div class="card-tags">
-              <span class="tag">Dual-Swell Decomposition</span>
-              <span class="tag">Bathymetry Mapping</span>
-              <span class="tag">Tide Curves</span>
+              <van-tag type="primary" plain round size="medium">Dual-Swell Decomposition</van-tag>
+              <van-tag type="primary" plain round size="medium">Bathymetry Mapping</van-tag>
+              <van-tag type="success" plain round size="medium">Tide Curves</van-tag>
             </div>
           </div>
         </article>
@@ -51,8 +59,9 @@ function triggerVoiceSimulation() {
         <!-- Pillar 2: Agentic Voice & Chat Quiver Advisor -->
         <article id="agent-vision" class="glass-panel showcase-card feature-agent" aria-labelledby="pillar-agent">
           <div class="agent-badge">
-            <span class="sparkle" aria-hidden="true">✦</span>
-            <span>Agentic Voice & Vision</span>
+            <van-tag color="linear-gradient(135deg, #0077b6 0%, #00b4d8 100%)" size="large" round>
+              ✦ Agentic Voice & Vision
+            </van-tag>
           </div>
 
           <h3 id="pillar-agent" class="card-heading">Your Personal AI Surf Caddy</h3>
@@ -92,7 +101,7 @@ function triggerVoiceSimulation() {
                   </svg>
                   <span>{{ isSimulatingVoice ? 'Listening...' : 'Simulate Voice Query' }}</span>
                 </button>
-                <span class="board-matched-badge">Board matched: 6'0" Round Pin (32.4L)</span>
+                <van-tag color="#e0f2fe" text-color="#0369a1" round>Board matched: 6'0" Round Pin (32.4L)</van-tag>
               </div>
             </div>
           </div>
@@ -101,7 +110,7 @@ function triggerVoiceSimulation() {
         <!-- Pillar 3: Predictive Alerts -->
         <article class="glass-panel showcase-card" aria-labelledby="pillar-alerts">
           <div class="card-icon" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0077b6" stroke-width="2">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
@@ -112,7 +121,7 @@ function triggerVoiceSimulation() {
             so you never wake up to blown-out surf.
           </p>
           <div class="alert-mock-chip">
-            <span class="chip-status">PUSH ALERT</span>
+            <van-tag type="danger" round>PUSH ALERT</van-tag>
             <span class="chip-desc">Mundaka hitting 9.4 tomorrow 07:30</span>
           </div>
         </article>
@@ -120,7 +129,7 @@ function triggerVoiceSimulation() {
         <!-- Pillar 4: Mobile & PWA -->
         <article class="glass-panel showcase-card" aria-labelledby="pillar-mobile">
           <div class="card-icon" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#06d6a0" stroke-width="2">
               <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
               <path d="M12 18h.01" />
             </svg>
@@ -131,9 +140,9 @@ function triggerVoiceSimulation() {
             tide tables, real-time webcam links, and zero tracking ads.
           </p>
           <div class="card-tags">
-            <span class="tag">PWA Ready</span>
-            <span class="tag">Sub-second Loads</span>
-            <span class="tag">Ad-Free</span>
+            <van-tag type="success" plain round size="medium">PWA Ready</van-tag>
+            <van-tag type="primary" plain round size="medium">Sub-second Loads</van-tag>
+            <van-tag type="default" plain round size="medium">Ad-Free</van-tag>
           </div>
         </article>
       </div>
@@ -162,6 +171,7 @@ function triggerVoiceSimulation() {
   letter-spacing: -0.04em;
   line-height: 1.15;
   margin: 0;
+  color: var(--text-main);
 }
 
 .section-subtitle {
@@ -188,57 +198,64 @@ function triggerVoiceSimulation() {
   display: flex;
   flex-direction: column;
   position: relative;
+  background: #ffffff;
 }
 
 .feature-wide {
   grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 @media (min-width: 992px) {
   .feature-wide {
     flex-direction: row;
     align-items: center;
-    gap: 2rem;
+    gap: 2.5rem;
   }
+}
+
+.feature-img-wrap {
+  flex: 1;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  max-height: 260px;
+  box-shadow: 0 10px 25px -5px rgba(12, 35, 56, 0.15);
+}
+
+.feature-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.feature-img:hover {
+  transform: scale(1.03);
+}
+
+.card-text {
+  flex: 1.2;
 }
 
 .feature-agent {
   grid-column: 1 / -1;
-  background: linear-gradient(150deg, rgba(20, 35, 55, 0.7) 0%, rgba(10, 20, 32, 0.85) 100%);
-  border-color: rgba(99, 102, 241, 0.25);
-  box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.15);
+  background: linear-gradient(150deg, #ffffff 0%, #f0f7fc 100%);
+  border-color: rgba(0, 119, 182, 0.2);
+  box-shadow: 0 20px 45px -10px rgba(0, 119, 182, 0.1);
 }
 
 .agent-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.85rem;
-  border-radius: 9999px;
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #c7d2fe;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
   margin-bottom: 1rem;
-  align-self: flex-start;
-}
-
-.sparkle {
-  color: #a5b4fc;
 }
 
 .card-icon {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
+  background: rgba(0, 119, 182, 0.08);
+  border: 1px solid rgba(0, 119, 182, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -266,22 +283,12 @@ function triggerVoiceSimulation() {
   gap: 0.5rem;
 }
 
-.tag {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.3rem 0.75rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-subtle);
-}
-
 /* Chat preview box */
 .chat-preview-box {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: rgba(4, 9, 15, 0.6);
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
   border-radius: 1.25rem;
   padding: 1.25rem;
@@ -297,15 +304,15 @@ function triggerVoiceSimulation() {
 }
 
 .chat-bubble.user {
-  background: rgba(255, 255, 255, 0.04);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   align-self: flex-start;
   max-width: 90%;
 }
 
 .chat-bubble.agent {
-  background: rgba(13, 242, 201, 0.06);
-  border: 1px solid rgba(13, 242, 201, 0.2);
+  background: rgba(0, 119, 182, 0.06);
+  border: 1px solid rgba(0, 119, 182, 0.18);
   align-self: stretch;
 }
 
@@ -320,14 +327,14 @@ function triggerVoiceSimulation() {
 }
 
 .agent-tag {
-  color: var(--accent-cyan);
+  color: var(--accent-blue);
 }
 
 .agent-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent-cyan);
+  background: var(--accent-blue);
 }
 
 .message-text {
@@ -344,7 +351,7 @@ function triggerVoiceSimulation() {
   gap: 0.85rem;
   margin-top: 0.75rem;
   padding-top: 0.75rem;
-  border-top: 1px solid rgba(13, 242, 201, 0.15);
+  border-top: 1px solid rgba(0, 119, 182, 0.15);
 }
 
 .action-pill-btn {
@@ -353,9 +360,9 @@ function triggerVoiceSimulation() {
   gap: 0.4rem;
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
-  background: rgba(13, 242, 201, 0.1);
-  border: 1px solid rgba(13, 242, 201, 0.3);
-  color: var(--accent-cyan);
+  background: rgba(0, 119, 182, 0.1);
+  border: 1px solid rgba(0, 119, 182, 0.3);
+  color: var(--accent-blue);
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
@@ -363,13 +370,7 @@ function triggerVoiceSimulation() {
 }
 
 .action-pill-btn:hover {
-  background: rgba(13, 242, 201, 0.2);
-}
-
-.board-matched-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  background: rgba(0, 119, 182, 0.2);
 }
 
 /* Voice waveform animation */
@@ -383,7 +384,7 @@ function triggerVoiceSimulation() {
 .voice-wave .bar {
   width: 2px;
   height: 100%;
-  background: var(--accent-cyan);
+  background: var(--accent-blue);
   border-radius: 2px;
   animation: wave-bar 0.8s ease-in-out infinite alternate;
 }
@@ -403,21 +404,14 @@ function triggerVoiceSimulation() {
   gap: 0.6rem;
   padding: 0.6rem 0.85rem;
   border-radius: 0.75rem;
-  background: rgba(56, 189, 248, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
   margin-top: auto;
 }
 
-.chip-status {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  color: #38bdf8;
-}
-
 .chip-desc {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-main);
-  font-weight: 500;
+  font-weight: 600;
 }
 </style>

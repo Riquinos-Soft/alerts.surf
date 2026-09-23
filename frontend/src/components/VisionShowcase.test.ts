@@ -1,11 +1,15 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-
 import VisionShowcase from './VisionShowcase.vue'
+import Vant from 'vant'
 
 describe('VisionShowcase', () => {
   it('renders all product pillars and agentic caddy preview', () => {
-    const wrapper = mount(VisionShowcase)
+    const wrapper = mount(VisionShowcase, {
+      global: {
+        plugins: [Vant]
+      }
+    })
 
     expect(wrapper.get('#showcase-title').text()).toContain('Everything traditional surf forecasts missed')
     expect(wrapper.get('#pillar-physics').text()).toContain('Condition Scoring That Actually Works')
@@ -15,7 +19,11 @@ describe('VisionShowcase', () => {
   })
 
   it('triggers voice simulation when action button is clicked', async () => {
-    const wrapper = mount(VisionShowcase)
+    const wrapper = mount(VisionShowcase, {
+      global: {
+        plugins: [Vant]
+      }
+    })
 
     const voiceBtn = wrapper.find('.action-pill-btn')
     expect(voiceBtn.text()).toContain('Simulate Voice Query')

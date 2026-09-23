@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { defineAsyncComponent, ref } from 'vue'
+import AppMockupFrame from './AppMockupFrame.vue'
+
+const WaveCanvas3D = defineAsyncComponent(() => import('./WaveCanvas3D.vue'))
+const canRender3d = typeof WebGL2RenderingContext !== 'undefined'
 
 interface SpotPreview {
   id: string
@@ -50,19 +54,21 @@ function selectSpot(spot: SpotPreview) {
 
 <template>
   <section class="hero-section" aria-labelledby="hero-title">
+    <!-- 3D Procedural Wave Background -->
+    <WaveCanvas3D v-if="canRender3d" />
+
     <div class="container hero-container">
       <div class="hero-content">
         <div class="badge-pill active">
-          <span class="pill-dot" aria-hidden="true">●</span>
-          <span>Next-Gen Surf Intelligence</span>
+          <van-tag type="primary" size="medium" round>✨ Live Ocean Intelligence</van-tag>
         </div>
 
         <h1 id="hero-title" class="hero-title">
-          Know exactly when and where <span class="gradient-text-cyan">the ocean turns on.</span>
+          Know exactly when and where <span class="gradient-text">the ocean turns on.</span>
         </h1>
 
         <p class="hero-description">
-          Hyper-local swell dynamics, high-resolution wind vectors, and an agentic AI assistant
+          Hyper-local swell dynamics, 3D ocean simulation, high-resolution wind vectors, and an agentic AI assistant
           that understands your quiver and spots like a local shaper.
         </p>
 
@@ -78,28 +84,8 @@ function selectSpot(spot: SpotPreview) {
           </a>
         </div>
 
-        <div class="hero-stats">
-          <div class="stat-item">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">Independent Forecast</span>
-          </div>
-          <div class="stat-divider" aria-hidden="true" />
-          <div class="stat-item">
-            <span class="stat-number">15 min</span>
-            <span class="stat-label">Model Updates</span>
-          </div>
-          <div class="stat-divider" aria-hidden="true" />
-          <div class="stat-item">
-            <span class="stat-number">Voice & Chat</span>
-            <span class="stat-label">Agentic Ready</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-visual" aria-label="Interactive Spot Radar">
-        <div class="glass-panel radar-card">
-          <div class="card-ambient-glow" aria-hidden="true" />
-
+        <!-- Live Spot Radar Card -->
+        <div class="radar-card glass-panel">
           <div class="radar-header">
             <div class="spot-selector" role="tablist" aria-label="Sample Spots">
               <button
@@ -116,7 +102,7 @@ function selectSpot(spot: SpotPreview) {
             </div>
             <div class="live-pill">
               <span class="live-indicator" aria-hidden="true" />
-              <span>LIVE TELEMETRY</span>
+              <span>LIVE SWELL TELEMETRY</span>
             </div>
           </div>
 
@@ -157,6 +143,28 @@ function selectSpot(spot: SpotPreview) {
             </div>
           </div>
         </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Independent Forecast</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true" />
+          <div class="stat-item">
+            <span class="stat-number">15 min</span>
+            <span class="stat-label">Model Updates</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true" />
+          <div class="stat-item">
+            <span class="stat-number">Voice & Chat</span>
+            <span class="stat-label">Agentic Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- App Mockup in right column -->
+      <div class="hero-visual" aria-label="Interactive App Experience">
+        <AppMockupFrame />
       </div>
     </div>
   </section>
@@ -165,18 +173,21 @@ function selectSpot(spot: SpotPreview) {
 <style scoped>
 .hero-section {
   position: relative;
-  padding: clamp(3rem, 8vw, 6.5rem) 0 4rem;
+  padding: clamp(2.5rem, 6vw, 5.5rem) 0 3.5rem;
   overflow: hidden;
+  background: linear-gradient(180deg, rgba(244, 248, 251, 0.4) 0%, rgba(244, 248, 251, 0.9) 100%);
 }
 
 .hero-container {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3.5rem;
+  gap: 3rem;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1024px) {
   .hero-container {
     grid-template-columns: 1.15fr 0.85fr;
   }
@@ -186,24 +197,20 @@ function selectSpot(spot: SpotPreview) {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.75rem;
-}
-
-.pill-dot {
-  color: var(--accent-cyan);
-  font-size: 0.65rem;
+  gap: 1.5rem;
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  font-size: clamp(2.3rem, 5.5vw, 3.8rem);
   font-weight: 800;
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: -0.04em;
   margin: 0;
+  color: var(--text-main);
 }
 
 .hero-description {
-  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
   line-height: 1.6;
   color: var(--text-muted);
   max-width: 36rem;
@@ -221,7 +228,7 @@ function selectSpot(spot: SpotPreview) {
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  padding-top: 1.5rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--border-subtle);
   width: 100%;
 }
@@ -235,15 +242,16 @@ function selectSpot(spot: SpotPreview) {
 .stat-number {
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--accent-navy);
   letter-spacing: -0.02em;
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .stat-divider {
@@ -253,44 +261,30 @@ function selectSpot(spot: SpotPreview) {
 }
 
 /* Radar visual card */
-.hero-visual {
-  position: relative;
-  width: 100%;
-}
-
 .radar-card {
-  position: relative;
-  padding: 1.75rem;
-  border-radius: 1.75rem;
-  background: linear-gradient(145deg, rgba(14, 28, 42, 0.75) 0%, rgba(7, 16, 26, 0.9) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-}
-
-.card-ambient-glow {
-  position: absolute;
-  top: -40%;
-  right: -30%;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(13, 242, 201, 0.15) 0%, transparent 70%);
-  pointer-events: none;
+  width: 100%;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 15px 35px -10px rgba(12, 35, 56, 0.08);
 }
 
 .radar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .spot-selector {
   display: flex;
   gap: 0.35rem;
-  background: rgba(0, 0, 0, 0.25);
+  background: #f1f5f9;
   padding: 0.25rem;
   border-radius: 9999px;
-  border: 1px solid var(--border-subtle);
 }
 
 .spot-tab {
@@ -306,9 +300,9 @@ function selectSpot(spot: SpotPreview) {
 }
 
 .spot-tab.active {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-main);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  background: #ffffff;
+  color: var(--accent-blue);
+  box-shadow: 0 2px 8px rgba(0, 119, 182, 0.15);
 }
 
 .live-pill {
@@ -318,14 +312,14 @@ function selectSpot(spot: SpotPreview) {
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: var(--accent-cyan);
+  color: var(--accent-blue);
 }
 
 .live-indicator {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent-cyan);
+  background: #06d6a0;
   animation: pulse-glow 2s infinite;
 }
 
@@ -333,22 +327,22 @@ function selectSpot(spot: SpotPreview) {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 1.75rem;
-  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .spot-region {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: var(--text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 600;
 }
 
 .spot-name {
-  margin: 0.25rem 0 0;
-  font-size: 1.85rem;
+  margin: 0.2rem 0 0;
+  font-size: 1.65rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--text-main);
@@ -358,16 +352,16 @@ function selectSpot(spot: SpotPreview) {
   display: flex;
   align-items: baseline;
   gap: 0.4rem;
-  background: rgba(13, 242, 201, 0.08);
-  padding: 0.6rem 1rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(13, 242, 201, 0.25);
+  background: rgba(6, 214, 160, 0.1);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(6, 214, 160, 0.3);
 }
 
 .score-value {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 800;
-  color: var(--accent-cyan);
+  color: #059669;
   line-height: 1;
 }
 
@@ -377,63 +371,63 @@ function selectSpot(spot: SpotPreview) {
 }
 
 .score-out {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-subtle);
   font-weight: 600;
 }
 
 .score-condition {
-  font-size: 0.75rem;
-  color: var(--text-main);
+  font-size: 0.72rem;
+  color: #059669;
   font-weight: 700;
 }
 
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
 .metric-box {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.85rem;
-  border-radius: 0.9rem;
-  background: rgba(255, 255, 255, 0.02);
+  gap: 0.15rem;
+  padding: 0.75rem;
+  border-radius: 0.85rem;
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
 }
 
 .metric-box.highlighted {
   grid-column: span 2;
-  background: rgba(13, 242, 201, 0.04);
-  border-color: rgba(13, 242, 201, 0.2);
+  background: rgba(0, 119, 182, 0.04);
+  border-color: rgba(0, 119, 182, 0.2);
 }
 
 .metric-title {
-  font-size: 0.7rem;
-  color: var(--text-muted);
+  font-size: 0.68rem;
+  color: var(--text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-weight: 600;
 }
 
 .metric-val {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--text-main);
 }
 
 .text-accent {
-  color: #38bdf8;
+  color: var(--accent-blue);
 }
 
 .text-cyan {
-  color: var(--accent-cyan);
+  color: var(--accent-navy);
 }
 
 .metric-sub {
-  font-size: 0.7rem;
-  color: var(--text-subtle);
+  font-size: 0.68rem;
+  color: var(--text-muted);
 }
 </style>
