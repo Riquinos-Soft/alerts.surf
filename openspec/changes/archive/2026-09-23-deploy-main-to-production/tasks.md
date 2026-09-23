@@ -12,7 +12,7 @@
 
 - [x] 3.1 Provision the new VPS and install a preview; verify SSH key access, firewall, private database and HTTP application health.
 - [x] 3.2 Configure dedicated deployment credentials in GitHub and publish a focused commit/PR; verify secrets names and remote branch.
-- [ ] 3.3 After review/merge and DNS cutover, verify the main-triggered pipeline and public HTTPS; record any remaining operator steps.
+- [x] 3.3 After review/merge and DNS cutover, verify the main-triggered pipeline and public HTTPS; record any remaining operator steps.
 
 ## Verification record (2026-09-23)
 
@@ -21,5 +21,9 @@
 - Deployment 4/4 tests passed, including build/backup/migration/health failure subcases. Shellcheck, actionlint, OpenSpec strict validation and git diff checks passed.
 - Isolated production smoke checks passed: HTTP healthy, database-only outage returns 503 with application containers still running, recovery, and persistence through container recreation. Test containers and their disposable volumes were removed.
 - Preview revision 13d3cdb369e7cc651d5176b10313ed4e41ad47bf deployed twice successfully; second deployment produced a nonempty pre-migration SQL backup. Browser at http://198.244.233.153 displays `alerts.surf is running`; public API returns healthy.
-- PR #8 published; GitHub checks on 13d3cdb passed. Production environment is main-only, with dedicated SSH secrets and repository deployment variables configured.
-- Domain A record still points to the old server at this checkpoint. Public HTTPS and a main-triggered production run are not yet accepted.
+- PR #8 published and merged to main; GitHub Actions run 35810731720 on main passed and deployed commit 7dcc96e.
+- DNS A record cutover to 198.244.233.153 verified (no conflicting AAAA record).
+- Production host `/opt/alerts.surf/.env` updated to `SITE_ADDRESS=alerts.surf` and redeployment executed successfully.
+- Caddy automatically obtained valid Let's Encrypt TLS certificate for `alerts.surf`.
+- Public HTTP (port 80) permanently redirects (308) to HTTPS.
+- Public HTTPS (port 443) returns 200 OK for `https://alerts.surf/api/status` (`{"status":"ok","database":"ok"}`) and serves the frontend application.
