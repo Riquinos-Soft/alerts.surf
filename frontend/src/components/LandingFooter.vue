@@ -12,7 +12,7 @@ defineProps<{
         <div class="footer-brand">
           <span class="brand-text">alerts<span class="dot">.</span>surf</span>
           <p class="brand-motto">
-            Precision ocean forecasting and agentic intelligence for surfers worldwide.
+            Precision ocean forecasting, interactive 3D telemetry, and agentic intelligence for surfers worldwide.
           </p>
         </div>
 
@@ -39,7 +39,7 @@ defineProps<{
 
       <div class="footer-bottom">
         <p class="copyright">
-          &copy; {{ new Date().getFullYear() }} alerts.surf. Built with precision and care.
+          &copy; {{ new Date().getFullYear() }} alerts.surf. Crafted for surfers.
         </p>
       </div>
     </div>
@@ -49,7 +49,7 @@ defineProps<{
 <style scoped>
 .landing-footer {
   border-top: 1px solid var(--border-subtle);
-  background: rgba(4, 8, 13, 0.95);
+  background: #ffffff;
   padding: 4rem 0 2.5rem;
   margin-top: auto;
 }
@@ -81,7 +81,7 @@ defineProps<{
 }
 
 .dot {
-  color: var(--accent-cyan);
+  color: var(--accent-blue);
 }
 
 .brand-motto {
@@ -117,7 +117,7 @@ defineProps<{
 }
 
 .col-link:hover {
-  color: var(--text-main);
+  color: var(--accent-blue);
 }
 
 .footer-status-line {

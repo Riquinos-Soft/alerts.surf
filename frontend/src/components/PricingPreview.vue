@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Pricing preview component
+// Pricing preview component with Vant UI
 </script>
 
 <template>
@@ -8,7 +8,7 @@
       <div class="pricing-intro">
         <div class="badge-pill active">Radically Fair Pricing</div>
         <h2 id="pricing-title" class="pricing-title">
-          World-class surf forecasting, <span class="gradient-text-cyan">made accessible.</span>
+          World-class surf forecasting, <span class="gradient-text">made accessible.</span>
         </h2>
         <p class="pricing-subtitle">
           Traditional forecast platforms charge exorbitant fees for bloated video player networks.
@@ -46,14 +46,21 @@
             </li>
           </ul>
 
-          <button type="button" class="btn-secondary card-btn">
+          <van-button
+            type="default"
+            round
+            block
+            class="card-btn"
+          >
             Get Started Free
-          </button>
+          </van-button>
         </div>
 
         <!-- Tier 2: Pro -->
         <div class="glass-panel pricing-card featured">
-          <div class="featured-badge">MOST POPULAR</div>
+          <div class="featured-badge">
+            <van-tag type="danger" round size="medium">MOST POPULAR</van-tag>
+          </div>
           <div class="card-tier">Pro Forecaster + Agent</div>
           <div class="card-price">
             <span class="currency">€</span>
@@ -85,9 +92,15 @@
             </li>
           </ul>
 
-          <button type="button" class="btn-primary card-btn">
+          <van-button
+            type="primary"
+            round
+            block
+            color="linear-gradient(135deg, #0077b6 0%, #00b4d8 100%)"
+            class="card-btn"
+          >
             Start 14-Day Free Trial
-          </button>
+          </van-button>
         </div>
       </div>
     </div>
@@ -115,6 +128,7 @@
   letter-spacing: -0.04em;
   line-height: 1.15;
   margin: 0;
+  color: var(--text-main);
 }
 
 .pricing-subtitle {
@@ -145,26 +159,21 @@
   flex-direction: column;
   position: relative;
   border-radius: 1.75rem;
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 15px 35px -10px rgba(12, 35, 56, 0.08);
 }
 
 .pricing-card.featured {
-  background: linear-gradient(160deg, rgba(20, 39, 58, 0.9) 0%, rgba(9, 20, 31, 0.95) 100%);
-  border-color: rgba(13, 242, 201, 0.35);
-  box-shadow: 0 25px 50px -12px rgba(13, 242, 201, 0.2);
+  background: linear-gradient(160deg, #ffffff 0%, #f0f7fc 100%);
+  border-color: rgba(0, 119, 182, 0.3);
+  box-shadow: 0 20px 45px -10px rgba(0, 119, 182, 0.15);
 }
 
 .featured-badge {
   position: absolute;
   top: -12px;
   right: 2rem;
-  background: linear-gradient(135deg, #0df2c9 0%, #00b4d8 100%);
-  color: #041219;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 0.3rem 0.75rem;
-  border-radius: 9999px;
-  box-shadow: 0 4px 12px rgba(13, 242, 201, 0.3);
 }
 
 .card-tier {
@@ -184,7 +193,7 @@
 .currency {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--accent-cyan);
+  color: var(--accent-blue);
 }
 
 .amount {
@@ -230,11 +239,12 @@
 }
 
 .check-icon {
-  color: var(--accent-cyan);
+  color: #06d6a0;
   font-weight: 800;
 }
 
 .card-btn {
   width: 100%;
+  font-weight: 600;
 }
 </style>
