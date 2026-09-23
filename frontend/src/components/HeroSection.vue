@@ -173,7 +173,7 @@ function selectSpot(spot: SpotPreview) {
 <style scoped>
 .hero-section {
   position: relative;
-  padding: clamp(2.5rem, 6vw, 5.5rem) 0 3.5rem;
+  padding: clamp(5.25rem, 8vw, 6.5rem) 0 3.5rem;
   overflow: hidden;
   background: linear-gradient(180deg, rgba(244, 248, 251, 0.4) 0%, rgba(244, 248, 251, 0.9) 100%);
 }

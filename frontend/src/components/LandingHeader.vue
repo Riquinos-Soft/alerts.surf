@@ -76,12 +76,11 @@ defineEmits<{
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 0.85rem 0;
+  height: 4.125rem;
+  margin-bottom: -4.125rem;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background: rgba(255, 255, 255, 0.88);
-  border-bottom: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 20px rgba(12, 35, 56, 0.03);
+  background: rgba(244, 248, 251, 0.15);
 }
 
 .header-container {
@@ -89,6 +88,7 @@ defineEmits<{
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  height: 100%;
 }
 
 .brand {
