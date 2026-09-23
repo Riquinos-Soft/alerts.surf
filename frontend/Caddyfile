@@ -1,0 +1,21 @@
+(application) {
+    encode zstd gzip
+    header X-Content-Type-Options nosniff
+    handle /api/* {
+        reverse_proxy backend:8000
+    }
+    handle {
+        root * /srv
+        try_files {path} /index.html
+        file_server
+    }
+}
+
+{$SITE_ADDRESS} {
+    import application
+}
+
+# Container-only health probe, never published on the host.
+http://:8080 {
+    import application
+}

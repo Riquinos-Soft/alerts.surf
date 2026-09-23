@@ -14,7 +14,7 @@ context: |
   - Frontend testing: Vitest.
   - JavaScript and TypeScript package manager: Bun.
   - Local infrastructure: Docker Compose.
-  - Production deployment target: a single DigitalOcean droplet using containers.
+  - Production deployment target: a single OVH VPS using containers (Ubuntu 26.04, x86_64).
   - Reverse proxy: Caddy.
   - CI/CD: GitHub Actions.
   - Initial architecture: modular monolith.
