@@ -1,9 +1,13 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-
 import LandingHeader from './LandingHeader.vue'
+import Vant from 'vant'
 
 describe('LandingHeader', () => {
+  const globalOptions = {
+    plugins: [Vant]
+  }
+
   it('renders brand emblem and loading status', () => {
     const wrapper = mount(LandingHeader, {
       props: {
@@ -11,6 +15,7 @@ describe('LandingHeader', () => {
         isHealthy: false,
         isLoading: true,
       },
+      global: globalOptions
     })
 
     expect(wrapper.text()).toContain('alerts.surf')
@@ -25,6 +30,7 @@ describe('LandingHeader', () => {
         isHealthy: true,
         isLoading: false,
       },
+      global: globalOptions
     })
 
     expect(wrapper.get('[role="status"]').text()).toBe('alerts.surf is running')
@@ -38,6 +44,7 @@ describe('LandingHeader', () => {
         isHealthy: false,
         isLoading: false,
       },
+      global: globalOptions
     })
 
     expect(wrapper.get('[role="status"]').text()).toBe('alerts.surf is unavailable')
@@ -51,6 +58,7 @@ describe('LandingHeader', () => {
         isHealthy: true,
         isLoading: false,
       },
+      global: globalOptions
     })
     
     await wrapper.find('[data-test="login-btn"]').trigger('click')

@@ -1,18 +1,39 @@
 :root {
-  --bg-main: #050b11;
-  --bg-surface: rgba(14, 28, 42, 0.65);
-  --bg-surface-elevated: rgba(20, 39, 58, 0.85);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-highlight: rgba(13, 242, 201, 0.3);
-  --text-main: #f0f6fc;
-  --text-muted: #8b9eb0;
-  --text-subtle: #576d82;
-  --accent-cyan: #0df2c9;
-  --accent-blue: #00b4d8;
-  --accent-indigo: #6366f1;
-  --accent-emerald: #10b981;
+  /* Bright coastal palette */
+  --bg-main: #f4f8fb;
+  --bg-surface: rgba(255, 255, 255, 0.85);
+  --bg-surface-elevated: rgba(255, 255, 255, 0.95);
+  --border-subtle: rgba(15, 45, 75, 0.08);
+  --border-highlight: rgba(0, 150, 214, 0.35);
+
+  --text-main: #0c2338;
+  --text-muted: #4e6b82;
+  --text-subtle: #879eb0;
+
+  --accent-cyan: #00b4d8;
+  --accent-blue: #0077b6;
+  --accent-navy: #023e8a;
+  --accent-sun: #ffb703;
+  --accent-sand: #fefae0;
+  --accent-emerald: #06d6a0;
+
   --status-ok: #10b981;
   --status-error: #ef4444;
+
+  /* Vant theme overrides */
+  --van-primary-color: #0077b6;
+  --van-success-color: #06d6a0;
+  --van-danger-color: #ef4444;
+  --van-warning-color: #ffb703;
+  --van-text-color: #0c2338;
+  --van-text-color-2: #4e6b82;
+  --van-text-color-3: #879eb0;
+  --van-background: #f4f8fb;
+  --van-background-2: #ffffff;
+  --van-border-color: rgba(15, 45, 75, 0.08);
+  --van-radius-md: 12px;
+  --van-radius-lg: 16px;
+  --van-font-bold: 600;
 
   color: var(--text-main);
   background: var(--bg-main);
@@ -34,9 +55,9 @@ body {
   min-height: 100vh;
   background-color: var(--bg-main);
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(13, 242, 201, 0.12), transparent 70%),
-    radial-gradient(ellipse 60% 40% at 90% 20%, rgba(99, 102, 241, 0.08), transparent 60%),
-    radial-gradient(ellipse 50% 50% at 10% 80%, rgba(0, 180, 216, 0.06), transparent 70%);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0, 180, 216, 0.12), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 90% 15%, rgba(6, 214, 160, 0.08), transparent 60%),
+    radial-gradient(ellipse 50% 50% at 10% 70%, rgba(254, 250, 224, 0.6), transparent 70%);
   background-attachment: fixed;
   color: var(--text-main);
   overflow-x: hidden;
@@ -59,28 +80,30 @@ a {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
 }
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* Glassmorphism surface */
+/* Glassmorphism light card */
 .glass-panel {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: 1.5rem;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 40px -15px rgba(12, 35, 56, 0.07);
   transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(0, 180, 216, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(12, 35, 56, 0.12);
 }
 
 /* Subtle badge pill */
@@ -90,19 +113,19 @@ a {
   gap: 0.5rem;
   padding: 0.35rem 0.85rem;
   font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
+  background: rgba(0, 119, 182, 0.08);
+  border: 1px solid rgba(0, 119, 182, 0.15);
+  color: var(--accent-blue);
 }
 
 .badge-pill.active {
-  border-color: rgba(13, 242, 201, 0.3);
-  color: var(--accent-cyan);
-  background: rgba(13, 242, 201, 0.06);
+  border-color: rgba(6, 214, 160, 0.4);
+  color: #059669;
+  background: rgba(6, 214, 160, 0.12);
 }
 
 /* Interactive buttons */
@@ -111,21 +134,21 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.85rem 1.75rem;
+  padding: 0.85rem 1.85rem;
   border-radius: 9999px;
   font-size: 0.95rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #0df2c9 0%, #00b4d8 100%);
-  color: #041219;
+  background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+  color: #ffffff;
   border: none;
   cursor: pointer;
-  box-shadow: 0 0 25px rgba(13, 242, 201, 0.35);
+  box-shadow: 0 8px 20px -4px rgba(0, 119, 182, 0.35);
   transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 35px rgba(13, 242, 201, 0.55);
+  box-shadow: 0 12px 28px -4px rgba(0, 119, 182, 0.45);
 }
 
 .btn-primary:active {
@@ -141,29 +164,29 @@ a {
   border-radius: 9999px;
   font-size: 0.95rem;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.04);
+  background: #ffffff;
   color: var(--text-main);
   border: 1px solid var(--border-subtle);
   cursor: pointer;
-  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(12, 35, 56, 0.04);
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: #f8fafc;
+  border-color: rgba(0, 119, 182, 0.25);
   transform: translateY(-2px);
 }
 
 /* Glowing text gradients */
 .gradient-text {
-  background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 70%, #0df2c9 100%);
+  background: linear-gradient(135deg, #023e8a 0%, #0077b6 50%, #00b4d8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-text-cyan {
-  background: linear-gradient(135deg, #ffffff 40%, #0df2c9 100%);
+  background: linear-gradient(135deg, #0077b6 20%, #06d6a0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -178,18 +201,18 @@ a {
 
 .status-beacon.healthy {
   background-color: var(--status-ok);
-  box-shadow: 0 0 10px var(--status-ok);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
   animation: pulse-glow 2.5s infinite;
 }
 
 .status-beacon.degraded {
   background-color: var(--status-error);
-  box-shadow: 0 0 10px var(--status-error);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
 .status-beacon.checking {
   background-color: #f59e0b;
-  box-shadow: 0 0 10px #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
   animation: pulse-glow 1.5s infinite;
 }
 
@@ -222,7 +245,7 @@ a {
 
 .eyebrow {
   margin: 0 0 0.75rem;
-  color: var(--accent-cyan);
+  color: var(--accent-blue);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -233,8 +256,8 @@ h1 {
   margin: 0;
   color: var(--text-main);
   font-size: clamp(2.25rem, 8vw, 4.5rem);
-  letter-spacing: -0.05em;
-  line-height: 1.05;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
 }
 
 .status-message {

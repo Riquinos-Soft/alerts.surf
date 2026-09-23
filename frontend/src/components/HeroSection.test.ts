@@ -2,10 +2,15 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
 import HeroSection from './HeroSection.vue'
+import Vant from 'vant'
 
 describe('HeroSection', () => {
   it('renders hero title, description, and primary CTAs', () => {
-    const wrapper = mount(HeroSection)
+    const wrapper = mount(HeroSection, {
+      global: {
+        plugins: [Vant]
+      }
+    })
 
     expect(wrapper.get('#hero-title').text()).toContain('Know exactly when and where')
     expect(wrapper.text()).toContain('Explore Intelligence')
@@ -13,7 +18,11 @@ describe('HeroSection', () => {
   })
 
   it('renders live spot telemetry and allows tab switching', async () => {
-    const wrapper = mount(HeroSection)
+    const wrapper = mount(HeroSection, {
+      global: {
+        plugins: [Vant]
+      }
+    })
 
     // Default spot is Mundaka
     expect(wrapper.find('.spot-name').text()).toBe('Mundaka')

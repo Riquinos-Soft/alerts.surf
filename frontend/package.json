@@ -11,10 +11,13 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "three": "^0.186.0",
+    "vant": "^4.10.2",
     "vue": "3.5.41"
   },
   "devDependencies": {
     "@types/node": "26.2.0",
+    "@types/three": "^0.186.0",
     "@vitejs/plugin-vue": "6.0.8",
     "@vue/test-utils": "2.4.11",
     "jsdom": "30.0.1",
