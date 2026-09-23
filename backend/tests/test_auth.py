@@ -42,3 +42,9 @@ def test_logout():
         headers={"Authorization": f"Bearer {token}"}
     )
     assert response_again.status_code == 401
+
+    dashboard_response = client.get(
+        "/api/dashboard/summary",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert dashboard_response.status_code == 401
