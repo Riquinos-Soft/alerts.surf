@@ -95,4 +95,41 @@ describe('App', () => {
       'alerts.surf is unavailable',
     )
   })
+
+  it('renders all key sections of the welcome landing page', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        createResponse(true, {
+          status: 'ok',
+          database: 'ok',
+        }),
+      ),
+    )
+
+    const wrapper = mount(App)
+    await flushPromises()
+
+    // Header & brand
+    expect(wrapper.find('.landing-header').exists()).toBe(true)
+    expect(wrapper.text()).toContain('alerts.surf')
+
+    // Hero section & live spot radar
+    expect(wrapper.find('.hero-section').exists()).toBe(true)
+    expect(wrapper.get('#hero-title').text()).toContain('Know exactly when and where')
+    expect(wrapper.find('.radar-card').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Mundaka')
+
+    // Vision showcase & agentic AI
+    expect(wrapper.find('.vision-section').exists()).toBe(true)
+    expect(wrapper.get('#pillar-agent').text()).toContain('Your Personal AI Surf Caddy')
+
+    // Pricing
+    expect(wrapper.find('.pricing-section').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Radically Fair Pricing')
+    expect(wrapper.text()).toContain('€2.99')
+
+    // Footer
+    expect(wrapper.find('.landing-footer').exists()).toBe(true)
+  })
 })
