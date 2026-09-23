@@ -43,6 +43,11 @@ def login(request: LoginRequest):
 
 @router.post("/logout", response_model=LogoutResponse)
 def logout(token: str = Depends(oauth2_scheme)):
-    if token in active_tokens:
-        active_tokens.remove(token)
+    if token not in active_tokens:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    active_tokens.remove(token)
     return LogoutResponse(message="Logged out successfully")
