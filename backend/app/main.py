@@ -4,8 +4,12 @@ from fastapi import Depends, FastAPI, Response, status
 from pydantic import BaseModel
 
 from app.database import is_database_available
+from app.auth import router as auth_router
+from app.dashboard import router as dashboard_router
 
 app = FastAPI(title="alerts.surf")
+app.include_router(auth_router)
+app.include_router(dashboard_router)
 
 
 class ApplicationStatus(BaseModel):

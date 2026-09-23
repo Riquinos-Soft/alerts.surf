@@ -43,4 +43,17 @@ describe('LandingHeader', () => {
     expect(wrapper.get('[role="status"]').text()).toBe('alerts.surf is unavailable')
     expect(wrapper.find('.status-beacon.degraded').exists()).toBe(true)
   })
+
+  it('emits openLogin when sign in button is clicked', async () => {
+    const wrapper = mount(LandingHeader, {
+      props: {
+        statusMessage: 'alerts.surf is running',
+        isHealthy: true,
+        isLoading: false,
+      },
+    })
+    
+    await wrapper.find('[data-test="login-btn"]').trigger('click')
+    expect(wrapper.emitted('openLogin')).toBeTruthy()
+  })
 })
