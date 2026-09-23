@@ -8,6 +8,7 @@ root=${DEPLOY_ROOT:-/opt/alerts.surf}
 release="$root/releases/$revision"
 test -f "$root/.env"
 test -f "$release/compose.production.yaml"
+cd "$release"
 exec 9>"$root/deploy.lock"
 flock -w 600 9
 export RELEASE_SHA="$revision"
