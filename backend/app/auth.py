@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer
+import os
 import secrets
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -28,11 +29,24 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return "userbeta"
+    return os.environ.get("BETA_USERNAME", "beta")
 
 @router.post("/login", response_model=LoginResponse)
 def login(request: LoginRequest):
-    if request.username == "userbeta" and request.password == "userbeta":
+    beta_username = os.environ.get("BETA_USERNAME")
+    beta_password = os.environ.get("BETA_PASSWORD")
+    if not beta_username or not beta_password:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Beta authentication is not configured",
+        )
+    username_matches = secrets.compare_digest(
+        request.username.encode(), beta_username.encode()
+    )
+    password_matches = secrets.compare_digest(
+        request.password.encode(), beta_password.encode()
+    )
+    if username_matches and password_matches:
         token = secrets.token_hex(16)
         active_tokens.add(token)
         return LoginResponse(access_token=token)

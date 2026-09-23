@@ -2,6 +2,7 @@
 # Isolated disposable acceptance stack. Never uses the production project/volumes.
 set -euo pipefail
 export POSTGRES_DB=smoke POSTGRES_USER=smoke POSTGRES_PASSWORD=smoke_test_only
+export BETA_USERNAME=smoke_user BETA_PASSWORD=smoke_test_only
 export SITE_ADDRESS=http://:80 HTTP_BIND=127.0.0.1 HTTP_PORT=${SMOKE_PORT:-18080} HTTPS_PORT=${SMOKE_TLS_PORT:-18443}
 export RELEASE_SHA=${RELEASE_SHA:-smoke}
 compose=(docker compose --project-name "alerts-smoke-$$" --env-file /dev/null -f compose.production.yaml)
