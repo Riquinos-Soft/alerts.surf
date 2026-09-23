@@ -132,4 +132,55 @@ describe('App', () => {
     // Footer
     expect(wrapper.find('.landing-footer').exists()).toBe(true)
   })
+
+  it('runs full login-to-dashboard-to-logout flow', async () => {
+    // Clear token before
+    sessionStorage.removeItem('beta_token')
+
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url === '/api/status') {
+        return Promise.resolve(createResponse(true, { status: 'ok', database: 'ok' }))
+      }
+      if (url === '/api/auth/login') {
+        return Promise.resolve(createResponse(true, { access_token: 'test-token' }))
+      }
+      if (url === '/api/dashboard/summary') {
+        return Promise.resolve(createResponse(true, {
+          beaches: [], tides: {}, quiver: [], alerts: []
+        }))
+      }
+      if (url === '/api/auth/logout') {
+        return Promise.resolve(createResponse(true, {}))
+      }
+      return Promise.resolve(createResponse(false, {}))
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const wrapper = mount(App)
+    await flushPromises()
+
+    // 1. Initial state: unauthenticated, should show login button
+    expect(wrapper.find('[data-test="login-btn"]').exists()).toBe(true)
+    
+    // 2. Click login button -> opens modal
+    await wrapper.find('[data-test="login-btn"]').trigger('click')
+    
+    // 3. Login
+    await wrapper.find('[data-test="username"]').setValue('userbeta')
+    await wrapper.find('[data-test="password"]').setValue('userbeta')
+    await wrapper.find('form').trigger('submit.prevent')
+    await flushPromises()
+    
+    // 4. Authenticated state: should hide landing, show dashboard
+    expect(wrapper.find('.dashboard').exists()).toBe(true)
+    expect(wrapper.find('.landing-shell main').exists()).toBe(false)
+    
+    // 5. Logout
+    await wrapper.find('[data-test="logout-btn"]').trigger('click')
+    await flushPromises()
+    
+    // 6. Unauthenticated again
+    expect(wrapper.find('.dashboard').exists()).toBe(false)
+    expect(wrapper.find('[data-test="login-btn"]').exists()).toBe(true)
+  })
 })

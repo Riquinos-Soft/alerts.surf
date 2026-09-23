@@ -4,6 +4,10 @@ defineProps<{
   isHealthy: boolean
   isLoading: boolean
 }>()
+
+defineEmits<{
+  (e: 'openLogin'): void
+}>()
 </script>
 
 <template>
@@ -50,6 +54,10 @@ defineProps<{
           {{ statusMessage }}
         </span>
       </div>
+      
+      <button @click="$emit('openLogin')" class="login-btn" data-test="login-btn">
+        Sign In / Entrar
+      </button>
     </div>
   </header>
 </template>
@@ -140,5 +148,18 @@ defineProps<{
 .status-badge-text {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.login-btn {
+  background: var(--accent-cyan, #00b4d8);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.login-btn:hover {
+  opacity: 0.9;
 }
 </style>
