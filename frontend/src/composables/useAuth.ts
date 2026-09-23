@@ -15,7 +15,7 @@ export function useAuth() {
     sessionStorage.removeItem('beta_token')
   }
 
-  const getAuthHeader = () => {
+  const getAuthHeader = (): Record<string, string> => {
     return token.value ? { Authorization: `Bearer ${token.value}` } : {}
   }
 
