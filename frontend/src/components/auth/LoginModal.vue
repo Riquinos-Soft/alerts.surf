@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuth } from '../../composables/useAuth'
+import { useLocale } from '../../composables/useLocale'
 
 const props = defineProps<{
   isOpen: boolean
@@ -13,12 +14,13 @@ const emit = defineEmits<{
 
 const username = ref('')
 const password = ref('')
-const error = ref('')
+const error = ref(false)
 const loading = ref(false)
 const { setToken } = useAuth()
+const { t } = useLocale()
 
 const handleLogin = async () => {
-  error.value = ''
+  error.value = false
   loading.value = true
   try {
     const res = await fetch('/api/auth/login', {
@@ -40,8 +42,8 @@ const handleLogin = async () => {
     setToken(data.access_token)
     emit('success')
     emit('close')
-  } catch (err: any) {
-    error.value = 'Failed to login: Invalid credentials'
+  } catch {
+    error.value = true
   } finally {
     loading.value = false
   }
@@ -51,21 +53,21 @@ const handleLogin = async () => {
 <template>
   <div v-if="isOpen" class="modal-overlay" @click.self="emit('close')">
     <div class="modal-content glass">
-      <h2>Beta Login</h2>
+      <h2>{{ t('Beta Login') }}</h2>
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
-          <label>Username</label>
+          <label>{{ t('Username') }}</label>
           <input type="text" v-model="username" required data-test="username" />
         </div>
         <div class="form-group">
-          <label>Password</label>
+          <label>{{ t('Password') }}</label>
           <input type="password" v-model="password" required data-test="password" />
         </div>
-        <div v-if="error" class="error-msg" data-test="error">{{ error }}</div>
+        <div v-if="error" class="error-msg" data-test="error">{{ t('Failed to login: Invalid credentials') }}</div>
         <div class="actions">
-          <button type="button" @click="emit('close')" class="btn-cancel">Cancel</button>
+          <button type="button" @click="emit('close')" class="btn-cancel">{{ t('Cancel') }}</button>
           <button type="submit" :disabled="loading" class="btn-primary" data-test="submit">
-            {{ loading ? 'Logging in...' : 'Sign In' }}
+            {{ loading ? t('Logging in...') : t('Sign in') }}
           </button>
         </div>
       </form>
