@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useLocale } from '../composables/useLocale'
+
+const { t } = useLocale()
 
 const isSimulatingVoice = ref(false)
-const agentReply = ref("Grab your 6'0\" Round Pin. The 14s swell is peaking right as the tide begins pushing, giving the sandbar the shape it needs.")
 
 function triggerVoiceSimulation() {
   isSimulatingVoice.value = true
@@ -16,12 +18,12 @@ function triggerVoiceSimulation() {
   <section id="forecast-showcase" class="vision-section" aria-labelledby="showcase-title">
     <div class="container">
       <div class="section-intro">
-        <div class="badge-pill">Architected for Surfers</div>
+        <div class="badge-pill">{{ t('Architected for Surfers') }}</div>
         <h2 id="showcase-title" class="section-title">
-          Everything traditional surf forecasts missed, <span class="gradient-text">reimagined.</span>
+          {{ t('Everything traditional surf forecasts missed,') }} <span class="gradient-text">{{ t('reimagined.') }}</span>
         </h2>
         <p class="section-subtitle">
-          From micro-climate wind patterns to an AI conversational agent that knows your boards and personal preferences.
+          {{ t('From micro-climate wind patterns to an AI conversational agent that knows your boards and personal preferences.') }}
         </p>
       </div>
 
@@ -31,7 +33,7 @@ function triggerVoiceSimulation() {
           <div class="feature-img-wrap">
             <img
               src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80"
-              alt="Powerful ocean swell barrel"
+              :alt="t('Powerful ocean swell barrel')"
               class="feature-img"
               loading="lazy"
             />
@@ -43,15 +45,14 @@ function triggerVoiceSimulation() {
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </div>
-            <h3 id="pillar-physics" class="card-heading">Condition Scoring That Actually Works</h3>
+            <h3 id="pillar-physics" class="card-heading">{{ t('Condition Scoring That Actually Works') }}</h3>
             <p class="card-desc">
-              No generic stars based solely on offshore wave height. alerts.surf correlates bathymetry,
-              primary and secondary swell vectors, and tide levels into an honest 0-10 session score.
+              {{ t('No generic stars based solely on offshore wave height. alerts.surf correlates bathymetry, primary and secondary swell vectors, and tide levels into an honest 0-10 session score.') }}
             </p>
             <div class="card-tags">
-              <van-tag type="primary" plain round size="medium">Dual-Swell Decomposition</van-tag>
-              <van-tag type="primary" plain round size="medium">Bathymetry Mapping</van-tag>
-              <van-tag type="success" plain round size="medium">Tide Curves</van-tag>
+              <van-tag type="primary" plain round size="medium">{{ t('Dual-Swell Decomposition') }}</van-tag>
+              <van-tag type="primary" plain round size="medium">{{ t('Bathymetry Mapping') }}</van-tag>
+              <van-tag type="success" plain round size="medium">{{ t('Tide Curves') }}</van-tag>
             </div>
           </div>
         </article>
@@ -60,34 +61,33 @@ function triggerVoiceSimulation() {
         <article id="agent-vision" class="glass-panel showcase-card feature-agent" aria-labelledby="pillar-agent">
           <div class="agent-badge">
             <van-tag color="linear-gradient(135deg, #0077b6 0%, #00b4d8 100%)" size="large" round>
-              ✦ Agentic Voice & Vision
+              {{ t('✦ Agentic Voice & Vision') }}
             </van-tag>
           </div>
 
-          <h3 id="pillar-agent" class="card-heading">Your Personal AI Surf Caddy</h3>
+          <h3 id="pillar-agent" class="card-heading">{{ t('Your Personal AI Surf Caddy') }}</h3>
           <p class="card-desc">
-            Talk or chat naturally. Ask about conditions, save your surfboard quiver, and get tailored
-            recommendations based on wave energy and board volume.
+            {{ t('Talk or chat naturally. Ask about conditions, save your surfboard quiver, and get tailored recommendations based on wave energy and board volume.') }}
           </p>
 
           <div class="chat-preview-box">
             <div class="chat-bubble user">
               <div class="speaker-tag">
                 <span class="speaker-icon" aria-hidden="true">🎙️</span>
-                <span>Surfer (Voice Prompt)</span>
+                <span>{{ t('Surfer (Voice Prompt)') }}</span>
               </div>
-              <p class="message-text">"Got 2 hours at dawn tomorrow. Should I wax the twin-fin or the round-pin?"</p>
+              <p class="message-text">{{ t('"Got 2 hours at dawn tomorrow. Should I wax the twin-fin or the round-pin?"') }}</p>
             </div>
 
             <div class="chat-bubble agent">
               <div class="agent-tag">
                 <span class="agent-dot" aria-hidden="true" />
-                <span>alerts.surf Agent</span>
-                <span v-if="isSimulatingVoice" class="voice-wave" aria-label="Voice synthesizing">
+                <span>{{ t('alerts.surf Agent') }}</span>
+                <span v-if="isSimulatingVoice" class="voice-wave" :aria-label="t('Voice synthesizing')">
                   <span class="bar" /><span class="bar" /><span class="bar" /><span class="bar" />
                 </span>
               </div>
-              <p class="message-text">{{ agentReply }}</p>
+              <p class="message-text">{{ t('Grab your 6\'0" Round Pin. The 14s swell is peaking right as the tide begins pushing, giving the sandbar the shape it needs.') }}</p>
 
               <div class="agent-meta">
                 <button
@@ -99,9 +99,9 @@ function triggerVoiceSimulation() {
                     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                     <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
                   </svg>
-                  <span>{{ isSimulatingVoice ? 'Listening...' : 'Simulate Voice Query' }}</span>
+                  <span>{{ isSimulatingVoice ? t('Listening...') : t('Simulate Voice Query') }}</span>
                 </button>
-                <van-tag color="#e0f2fe" text-color="#0369a1" round>Board matched: 6'0" Round Pin (32.4L)</van-tag>
+                <van-tag color="#e0f2fe" text-color="#0369a1" round>{{ t('Board matched:') }} 6'0" Round Pin (32.4L)</van-tag>
               </div>
             </div>
           </div>
@@ -115,14 +115,13 @@ function triggerVoiceSimulation() {
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </div>
-          <h3 id="pillar-alerts" class="card-heading">Laser-Focused Notifications</h3>
+          <h3 id="pillar-alerts" class="card-heading">{{ t('Laser-Focused Notifications') }}</h3>
           <p class="card-desc">
-            Set custom thresholds for your favorite breaks. We only ping you when conditions align,
-            so you never wake up to blown-out surf.
+            {{ t('Set custom thresholds for your favorite breaks. We only ping you when conditions align, so you never wake up to blown-out surf.') }}
           </p>
           <div class="alert-mock-chip">
-            <van-tag type="danger" round>PUSH ALERT</van-tag>
-            <span class="chip-desc">Mundaka hitting 9.4 tomorrow 07:30</span>
+            <van-tag type="danger" round>{{ t('PUSH ALERT') }}</van-tag>
+            <span class="chip-desc">{{ t('Mundaka hitting 9.4 tomorrow 07:30') }}</span>
           </div>
         </article>
 
@@ -134,15 +133,14 @@ function triggerVoiceSimulation() {
               <path d="M12 18h.01" />
             </svg>
           </div>
-          <h3 id="pillar-mobile" class="card-heading">Native Speed, Zero Bloat</h3>
+          <h3 id="pillar-mobile" class="card-heading">{{ t('Native Speed, Zero Bloat') }}</h3>
           <p class="card-desc">
-            Designed from day one as a lightning-fast SPA and offline-capable mobile PWA. Instant
-            tide tables, real-time webcam links, and zero tracking ads.
+            {{ t('Designed from day one as a lightning-fast SPA and offline-capable mobile PWA. Instant tide tables, real-time webcam links, and zero tracking ads.') }}
           </p>
           <div class="card-tags">
-            <van-tag type="success" plain round size="medium">PWA Ready</van-tag>
-            <van-tag type="primary" plain round size="medium">Sub-second Loads</van-tag>
-            <van-tag type="default" plain round size="medium">Ad-Free</van-tag>
+            <van-tag type="success" plain round size="medium">{{ t('PWA Ready') }}</van-tag>
+            <van-tag type="primary" plain round size="medium">{{ t('Sub-second Loads') }}</van-tag>
+            <van-tag type="default" plain round size="medium">{{ t('Ad-Free') }}</van-tag>
           </div>
         </article>
       </div>

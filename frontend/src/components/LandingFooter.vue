@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useLocale } from '../composables/useLocale'
+
+const { t } = useLocale()
 defineProps<{
   statusMessage: string
   isHealthy: boolean
@@ -12,19 +15,19 @@ defineProps<{
         <div class="footer-brand">
           <span class="brand-text">alerts<span class="dot">.</span>surf</span>
           <p class="brand-motto">
-            Precision ocean forecasting, interactive 3D telemetry, and agentic intelligence for surfers worldwide.
+            {{ t('Precision ocean forecasting, interactive 3D telemetry, and agentic intelligence for surfers worldwide.') }}
           </p>
         </div>
 
         <div class="footer-nav">
           <div class="nav-col">
-            <span class="col-title">Product</span>
-            <a href="#forecast-showcase" class="col-link">Intelligence</a>
-            <a href="#agent-vision" class="col-link">Agentic AI</a>
-            <a href="#pricing" class="col-link">Pricing</a>
+            <span class="col-title">{{ t('Product') }}</span>
+            <a href="#forecast-showcase" class="col-link">{{ t('Intelligence') }}</a>
+            <a href="#agent-vision" class="col-link">{{ t('Agentic AI') }}</a>
+            <a href="#pricing" class="col-link">{{ t('Pricing') }}</a>
           </div>
           <div class="nav-col">
-            <span class="col-title">Telemetry</span>
+            <span class="col-title">{{ t('Telemetry') }}</span>
             <span class="footer-status-line">
               <span
                 class="status-beacon"
@@ -39,7 +42,7 @@ defineProps<{
 
       <div class="footer-bottom">
         <p class="copyright">
-          &copy; {{ new Date().getFullYear() }} alerts.surf. Crafted for surfers.
+          &copy; {{ new Date().getFullYear() }} alerts.surf. {{ t('Crafted for surfers.') }}
         </p>
       </div>
     </div>
