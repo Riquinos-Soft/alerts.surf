@@ -426,11 +426,13 @@ function selectSpot(spot: SpotPreview) {
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
   .hero-section {
     padding-top: 1.5rem;
   }
+}
 
+@media (max-width: 767px) {
   .hero-stats {
     flex-wrap: wrap;
   }

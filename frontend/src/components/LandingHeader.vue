@@ -130,7 +130,7 @@ defineEmits<{
   gap: 2rem;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 768px) {
   .nav-links {
     display: flex;
   }
@@ -175,6 +175,25 @@ defineEmits<{
   font-weight: 600;
   padding: 0 1.2rem;
   box-shadow: 0 4px 12px rgba(0, 119, 182, 0.25);
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .landing-header {
+    height: auto;
+    margin-bottom: 0;
+  }
+
+  .header-container {
+    flex-wrap: wrap;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .header-right {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+  }
 }
 
 @media (max-width: 767px) {
