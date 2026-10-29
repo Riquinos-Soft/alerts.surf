@@ -3,6 +3,7 @@ import Vant from 'vant'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import SurferDashboard from './SurferDashboard.vue'
+import { setLocale } from '../../composables/useLocale'
 
 const summary = {
   beaches: [{ id: 1, name: 'Test Beach', condition_score: 8, swell: '1m', wind: '5 kts' }],
@@ -17,6 +18,7 @@ function mountDashboard() {
 
 describe('SurferDashboard navigation', () => {
   beforeEach(() => {
+    setLocale('en')
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
       json: async () => summary,
@@ -56,11 +58,11 @@ describe('SurferDashboard navigation', () => {
 
     await wrapper.get('[data-test="tab-mareas"]').trigger('keydown', { key: 'Enter' })
     expect(wrapper.find('[data-test="panel-mareas"]').exists()).toBe(true)
-    expect(wrapper.get('[role="tabpanel"]').attributes('aria-label')).toBe('Mareas')
+    expect(wrapper.get('[role="tabpanel"]').attributes('aria-label')).toBe('Tides')
     expect(wrapper.get('[data-test="tab-mareas"]').attributes('aria-selected')).toBe('true')
 
     await wrapper.get('[data-test="sidebar-alertas"]').trigger('keydown', { key: ' ' })
-    expect(wrapper.get('[role="tabpanel"]').attributes('aria-label')).toBe('Alertas')
+    expect(wrapper.get('[role="tabpanel"]').attributes('aria-label')).toBe('Alerts')
     expect(wrapper.get('[data-test="sidebar-alertas"]').attributes('aria-selected')).toBe('true')
   })
 
@@ -76,7 +78,7 @@ describe('SurferDashboard navigation', () => {
 
     rejectRequest(new Error('Unavailable'))
     await flushPromises()
-    expect(wrapper.get('[role="alert"]').text()).toBe('Unavailable')
+    expect(wrapper.get('[role="alert"]').text()).toBe('Unable to load dashboard')
     expect(wrapper.find('[data-test="logout-btn"]').exists()).toBe(true)
   })
 
@@ -89,5 +91,23 @@ describe('SurferDashboard navigation', () => {
     await flushPromises()
 
     expect(wrapper.emitted('logout')).toHaveLength(1)
+  })
+
+  it('translates both navigation variants and the selected panel in place', async () => {
+    const wrapper = mountDashboard()
+    await flushPromises()
+
+    await wrapper.get('[data-test="language-es"]').trigger('click')
+    expect(wrapper.get('.dashboard-header h1').text()).toBe('Panel de surf')
+    expect(wrapper.get('[data-test="tab-playas"]').text()).toBe('Playas')
+    expect(wrapper.get('[data-test="sidebar-playas"]').text()).toBe('Playas')
+    expect(wrapper.get('[role="tabpanel"]').attributes('aria-label')).toBe('Playas')
+    expect(wrapper.get('[data-test="panel-playas"]').text()).toContain('Puntuación: 8')
+
+    await wrapper.get('[data-test="sidebar-mareas"]').trigger('click')
+    expect(wrapper.get('[data-test="panel-mareas"]').text()).toContain('subiendo')
+    await wrapper.get('[data-test="language-en"]').trigger('click')
+    expect(wrapper.get('[data-test="tab-mareas"]').text()).toBe('Tides')
+    expect(wrapper.get('[role="tabpanel"]').attributes('aria-label')).toBe('Tides')
   })
 })

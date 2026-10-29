@@ -1,10 +1,12 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import HeroSection from './HeroSection.vue'
 import Vant from 'vant'
+import { setLocale } from '../composables/useLocale'
 
 describe('HeroSection', () => {
+  beforeEach(() => setLocale('en'))
   it('renders hero title, description, and primary CTAs', () => {
     const wrapper = mount(HeroSection, {
       global: {

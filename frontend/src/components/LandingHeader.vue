@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import LanguageSwitch from './LanguageSwitch.vue'
+import { useLocale } from '../composables/useLocale'
+
+const { t } = useLocale()
 defineProps<{
   statusMessage: string
   isHealthy: boolean
@@ -34,14 +38,14 @@ defineEmits<{
         <span class="brand-name">alerts<span class="dot">.</span>surf</span>
       </div>
 
-      <nav class="nav-links" aria-label="Main Navigation">
-        <a href="#forecast-showcase" class="nav-link">Intelligence</a>
-        <a href="#agent-vision" class="nav-link">Agentic AI</a>
-        <a href="#pricing" class="nav-link">Pricing</a>
+      <nav class="nav-links" :aria-label="t('Main navigation')">
+        <a href="#forecast-showcase" class="nav-link">{{ t('Intelligence') }}</a>
+        <a href="#agent-vision" class="nav-link">{{ t('Agentic AI') }}</a>
+        <a href="#pricing" class="nav-link">{{ t('Pricing') }}</a>
       </nav>
 
       <div class="header-right">
-        <div class="header-status" aria-label="Platform Health">
+        <div class="header-status" :aria-label="t('Platform health')">
           <span
             class="status-beacon"
             :class="{
@@ -55,6 +59,7 @@ defineEmits<{
             {{ statusMessage }}
           </span>
         </div>
+        <LanguageSwitch />
         <van-button
           type="primary"
           size="small"
@@ -64,7 +69,7 @@ defineEmits<{
           data-test="login-btn"
           color="linear-gradient(135deg, #0077b6 0%, #00b4d8 100%)"
         >
-          Sign In / Entrar
+          {{ t('Sign in') }}
         </van-button>
       </div>
     </div>
@@ -170,5 +175,55 @@ defineEmits<{
   font-weight: 600;
   padding: 0 1.2rem;
   box-shadow: 0 4px 12px rgba(0, 119, 182, 0.25);
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .landing-header {
+    height: auto;
+    margin-bottom: 0;
+  }
+
+  .header-container {
+    flex-wrap: wrap;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .header-right {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-header {
+    position: relative;
+    height: auto;
+    margin-bottom: 0;
+    background: rgba(244, 248, 251, 0.9);
+  }
+
+  .header-container {
+    flex-wrap: wrap;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .header-right {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .header-status {
+    order: 3;
+    width: 100%;
+  }
+
+  .status-badge-text {
+    white-space: normal;
+  }
 }
 </style>

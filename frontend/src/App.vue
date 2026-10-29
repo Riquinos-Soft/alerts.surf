@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import HeroSection from './components/HeroSection.vue'
 import LandingFooter from './components/LandingFooter.vue'
@@ -9,13 +9,20 @@ import VisionShowcase from './components/VisionShowcase.vue'
 import LoginModal from './components/auth/LoginModal.vue'
 import SurferDashboard from './components/dashboard/SurferDashboard.vue'
 import { useAuth } from './composables/useAuth'
+import { useLocale } from './composables/useLocale'
 
 type ApplicationStatus = {
   status: 'ok'
   database: 'ok'
 }
 
-const message = ref('Checking alerts.surf status...')
+const statusState = ref<'checking' | 'running' | 'unavailable'>('checking')
+const { t } = useLocale()
+const message = computed(() => t(statusState.value === 'checking'
+  ? 'Checking alerts.surf status...'
+  : statusState.value === 'running'
+    ? 'alerts.surf is running'
+    : 'alerts.surf is unavailable'))
 const isHealthy = ref(false)
 const isLoading = ref(true)
 
@@ -41,12 +48,10 @@ onMounted(async () => {
     const status: unknown = await response.json()
     const healthy = isHealthyStatus(status)
     isHealthy.value = healthy
-    message.value = healthy
-      ? 'alerts.surf is running'
-      : 'alerts.surf is unavailable'
+    statusState.value = healthy ? 'running' : 'unavailable'
   } catch {
     isHealthy.value = false
-    message.value = 'alerts.surf is unavailable'
+    statusState.value = 'unavailable'
   } finally {
     isLoading.value = false
   }

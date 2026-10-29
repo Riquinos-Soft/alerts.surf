@@ -1,7 +1,8 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App.vue'
+import { setLocale } from './composables/useLocale'
 
 function createResponse(ok: boolean, body: unknown): Response {
   return {
@@ -11,8 +12,10 @@ function createResponse(ok: boolean, body: unknown): Response {
 }
 
 describe('App', () => {
+  beforeEach(() => setLocale('en'))
   afterEach(() => {
     vi.unstubAllGlobals()
+    localStorage.removeItem('alerts.surf.language')
   })
 
   it('shows the loading state while the request is pending', async () => {
@@ -182,5 +185,43 @@ describe('App', () => {
     // 6. Unauthenticated again
     expect(wrapper.find('.dashboard').exists()).toBe(false)
     expect(wrapper.find('[data-test="login-btn"]').exists()).toBe(true)
+  })
+
+  it('switches the landing, status, login and dashboard language without a reload', async () => {
+    sessionStorage.removeItem('beta_token')
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      if (url === '/api/status') return Promise.resolve(createResponse(true, { status: 'ok', database: 'ok' }))
+      if (url === '/api/auth/login') return Promise.resolve(createResponse(true, { access_token: 'test-token' }))
+      if (url === '/api/dashboard/summary') return Promise.resolve(createResponse(true, {
+        beaches: [], tides: { current_level: '1m', trend: 'rising' }, quiver: [], alerts: [],
+      }))
+      return Promise.resolve(createResponse(true, {}))
+    }))
+
+    const wrapper = mount(App)
+    await flushPromises()
+    await wrapper.get('[data-test="language-es"]').trigger('click')
+    expect(wrapper.get('[data-test="language-es"]').attributes('aria-label')).toBe('Español')
+    expect(wrapper.get('[data-test="language-es"]').attributes('aria-pressed')).toBe('true')
+    expect(wrapper.get('[data-test="language-en"]').attributes('aria-label')).toBe('English')
+    expect(wrapper.get('#hero-title').text()).toContain('Descubre cuándo y dónde')
+    expect(wrapper.get('.ai-caddy-card').text()).toContain('Consejo de tablas con IA')
+    expect(wrapper.get('[role="status"]').text()).toBe('alerts.surf está funcionando')
+    expect(wrapper.get('.pricing-intro').text()).toContain('Precios radicalmente justos')
+    expect(document.documentElement.lang).toBe('es')
+
+    await wrapper.get('[data-test="login-btn"]').trigger('click')
+    expect(wrapper.get('.modal-content').text()).toContain('Acceso beta')
+    await wrapper.get('[data-test="username"]').setValue('tester')
+    await wrapper.get('[data-test="password"]').setValue('example')
+    await wrapper.get('form').trigger('submit.prevent')
+    await flushPromises()
+
+    expect(wrapper.get('.dashboard-header').text()).toContain('Panel de surf')
+    await wrapper.get('.dashboard [data-test="language-en"]').trigger('click')
+    expect(wrapper.get('.dashboard-header').text()).toContain('Surfer Dashboard')
+    expect(wrapper.get('[data-test="tab-playas"]').text()).toBe('Beaches')
+    expect(document.documentElement.lang).toBe('en')
+    expect(localStorage.getItem('alerts.surf.language')).toBe('en')
   })
 })

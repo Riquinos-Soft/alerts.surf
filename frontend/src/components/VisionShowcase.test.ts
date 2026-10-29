@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import VisionShowcase from './VisionShowcase.vue'
 import Vant from 'vant'
+import { setLocale } from '../composables/useLocale'
 
 describe('VisionShowcase', () => {
+  beforeEach(() => setLocale('en'))
   it('renders all product pillars and agentic caddy preview', () => {
     const wrapper = mount(VisionShowcase, {
       global: {

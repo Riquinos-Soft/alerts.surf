@@ -1,48 +1,49 @@
 <script setup lang="ts">
-// Pricing preview component with Vant UI
+import { useLocale } from '../composables/useLocale'
+
+const { t } = useLocale()
 </script>
 
 <template>
   <section id="pricing" class="pricing-section" aria-labelledby="pricing-title">
     <div class="container">
       <div class="pricing-intro">
-        <div class="badge-pill active">Radically Fair Pricing</div>
+        <div class="badge-pill active">{{ t('Radically Fair Pricing') }}</div>
         <h2 id="pricing-title" class="pricing-title">
-          World-class surf forecasting, <span class="gradient-text">made accessible.</span>
+          {{ t('World-class surf forecasting,') }} <span class="gradient-text">{{ t('made accessible.') }}</span>
         </h2>
         <p class="pricing-subtitle">
-          Traditional forecast platforms charge exorbitant fees for bloated video player networks.
-          We deliver raw ocean intelligence and agentic power at a fraction of the cost.
+          {{ t('Traditional forecast platforms charge exorbitant fees for bloated video player networks. We deliver raw ocean intelligence and agentic power at a fraction of the cost.') }}
         </p>
       </div>
 
       <div class="pricing-grid">
         <!-- Tier 1: Free -->
         <div class="glass-panel pricing-card">
-          <div class="card-tier">Free Tier</div>
+          <div class="card-tier">{{ t('Free Tier') }}</div>
           <div class="card-price">
             <span class="currency">€</span>
             <span class="amount">0</span>
-            <span class="frequency">forever</span>
+            <span class="frequency">{{ t('forever') }}</span>
           </div>
-          <p class="card-tagline">Essential forecast for weekend sessions and casual surfers.</p>
+          <p class="card-tagline">{{ t('Essential forecast for weekend sessions and casual surfers.') }}</p>
 
-          <ul class="feature-list" aria-label="Free features">
+          <ul class="feature-list" :aria-label="t('Free features')">
             <li class="feature-item">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span>3-day multi-model forecast</span>
+              <span>{{ t('3-day multi-model forecast') }}</span>
             </li>
             <li class="feature-item">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span>Core spot ratings (0–10 score)</span>
+              <span>{{ t('Core spot ratings (0–10 score)') }}</span>
             </li>
             <li class="feature-item">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span>Hourly wind and tide curves</span>
+              <span>{{ t('Hourly wind and tide curves') }}</span>
             </li>
             <li class="feature-item">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span>1 spot alert notification</span>
+              <span>{{ t('1 spot alert notification') }}</span>
             </li>
           </ul>
 
@@ -52,43 +53,43 @@
             block
             class="card-btn"
           >
-            Get Started Free
+            {{ t('Get Started Free') }}
           </van-button>
         </div>
 
         <!-- Tier 2: Pro -->
         <div class="glass-panel pricing-card featured">
           <div class="featured-badge">
-            <van-tag type="danger" round size="medium">MOST POPULAR</van-tag>
+            <van-tag type="danger" round size="medium">{{ t('MOST POPULAR') }}</van-tag>
           </div>
-          <div class="card-tier">Pro Forecaster + Agent</div>
+          <div class="card-tier">{{ t('Pro Forecaster + Agent') }}</div>
           <div class="card-price">
             <span class="currency">€</span>
             <span class="amount">2.99</span>
-            <span class="frequency">/ month</span>
+            <span class="frequency">{{ t('/ month') }}</span>
           </div>
-          <p class="card-tagline">Unlimited hyper-local intelligence and your personal AI surf caddy.</p>
+          <p class="card-tagline">{{ t('Unlimited hyper-local intelligence and your personal AI surf caddy.') }}</p>
 
-          <ul class="feature-list" aria-label="Pro features">
+          <ul class="feature-list" :aria-label="t('Pro features')">
             <li class="feature-item highlight">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span><strong>Agentic Voice & Chat</strong> quiver assistant</span>
+              <span><strong>{{ t('Agentic Voice & Chat') }}</strong> {{ t('quiver assistant') }}</span>
             </li>
             <li class="feature-item">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span>16-day extended ensemble forecast</span>
+              <span>{{ t('16-day extended ensemble forecast') }}</span>
             </li>
             <li class="feature-item">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span>Unlimited custom spot triggers</span>
+              <span>{{ t('Unlimited custom spot triggers') }}</span>
             </li>
             <li class="feature-item">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span>Dual-swell direction & bathymetry mapping</span>
+              <span>{{ t('Dual-swell direction & bathymetry mapping') }}</span>
             </li>
             <li class="feature-item">
               <span class="check-icon" aria-hidden="true">✓</span>
-              <span>Offline-ready PWA & instant web app</span>
+              <span>{{ t('Offline-ready PWA & instant web app') }}</span>
             </li>
           </ul>
 
@@ -99,7 +100,7 @@
             color="linear-gradient(135deg, #0077b6 0%, #00b4d8 100%)"
             class="card-btn"
           >
-            Start 14-Day Free Trial
+            {{ t('Start 14-Day Free Trial') }}
           </van-button>
         </div>
       </div>

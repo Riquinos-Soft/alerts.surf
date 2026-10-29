@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { FEATURED_SPOTS, QUIVER_MOCKS } from '../assets/surfData'
+import { useLocale } from '../composables/useLocale'
+
+const { t } = useLocale()
 
 const activeMockTab = ref('radar')
 const selectedSpot = ref(FEATURED_SPOTS[0])
 const aiRecommendationOpen = ref(false)
+
+function windLabel(wind: string): string {
+  if (wind === '7kt Off-shore') return t('7kt Off-shore')
+  if (wind === '5kt Light Cross') return t('5kt Light Cross')
+  if (wind === '4kt Off-shore') return t('4kt Off-shore')
+  return wind
+}
 
 const triggerAiAnalysis = () => {
   aiRecommendationOpen.value = true
@@ -24,7 +34,7 @@ const triggerAiAnalysis = () => {
         <div class="phone-status-bar">
           <span class="time">07:30</span>
           <div class="status-icons">
-            <van-tag type="primary" size="medium" round plain>5G LIVE</van-tag>
+            <van-tag type="primary" size="medium" round plain>{{ t('5G LIVE') }}</van-tag>
           </div>
         </div>
 
@@ -41,7 +51,7 @@ const triggerAiAnalysis = () => {
 
         <!-- Vant Tabs inside Mockup -->
         <van-tabs v-model:active="activeMockTab" shrink animated color="#0077b6" class="mockup-tabs">
-          <van-tab title="Radar" name="radar">
+          <van-tab :title="t('Radar')" name="radar">
             <div class="mockup-content">
               <!-- Live condition hero inside app -->
               <div class="mockup-spot-hero" :style="{ backgroundImage: `url(${selectedSpot.imageUrl})` }">
@@ -53,7 +63,7 @@ const triggerAiAnalysis = () => {
                   <div class="spot-meta-chips">
                     <van-tag color="rgba(255,255,255,0.25)" text-color="#fff">🌊 {{ selectedSpot.waveHeight }}</van-tag>
                     <van-tag color="rgba(255,255,255,0.25)" text-color="#fff">⏱️ {{ selectedSpot.period }}</van-tag>
-                    <van-tag color="rgba(255,255,255,0.25)" text-color="#fff">💨 {{ selectedSpot.wind }}</van-tag>
+                    <van-tag color="rgba(255,255,255,0.25)" text-color="#fff">💨 {{ windLabel(selectedSpot.wind) }}</van-tag>
                   </div>
                 </div>
               </div>
@@ -76,11 +86,11 @@ const triggerAiAnalysis = () => {
               <!-- AI Caddy Advisory Card with Vant Button -->
               <div class="ai-caddy-card">
                 <div class="ai-badge-row">
-                  <van-tag color="#0077b6">AI Quiver Advisory</van-tag>
-                  <span class="live-pulse">● Optimal Window Now</span>
+                  <van-tag color="#0077b6">{{ t('AI Quiver Advisory') }}</van-tag>
+                  <span class="live-pulse">{{ t('● Optimal Window Now') }}</span>
                 </div>
                 <p class="ai-speech">
-                  "Swell is peaking with 14s period. Ride the <strong>5'8 Hypto</strong> for speed over the shallow sandbar."
+                  {{ t('"Swell is peaking with 14s period. Ride the') }} <strong>5'8 Hypto</strong> {{ t('for speed over the shallow sandbar."') }}
                 </p>
                 <van-button
                   type="primary"
@@ -91,45 +101,45 @@ const triggerAiAnalysis = () => {
                   data-test="ai-advice-btn"
                   color="linear-gradient(135deg, #0077b6 0%, #00b4d8 100%)"
                 >
-                  {{ aiRecommendationOpen ? '✓ Advisory Active' : '✨ Ask AI Surf Caddy' }}
+                  {{ aiRecommendationOpen ? t('✓ Advisory Active') : t('✨ Ask AI Surf Caddy') }}
                 </van-button>
               </div>
             </div>
           </van-tab>
 
-          <van-tab title="Mareas" name="tides">
+          <van-tab :title="t('Tides')" name="tides">
             <div class="mockup-content">
               <div class="tide-summary-box">
                 <div class="tide-header">
-                  <span>Tide Station: Cantábrico</span>
-                  <van-tag type="primary">Rising</van-tag>
+                  <span>{{ t('Tide Station: Cantábrico') }}</span>
+                  <van-tag type="primary">{{ t('Rising') }}</van-tag>
                 </div>
                 <div class="tide-metric-big">1.85m</div>
-                <p class="tide-sub">High Tide: 14:15 (+2.1m) • Low Tide: 20:30 (0.4m)</p>
+                <p class="tide-sub">{{ t('High Tide: 14:15 (+2.1m) • Low Tide: 20:30 (0.4m)') }}</p>
               </div>
               <div class="tide-schedule-list">
                 <div class="tide-row">
                   <span>08:10</span>
-                  <span>Low Tide</span>
+                  <span>{{ t('Low Tide') }}</span>
                   <strong>0.6m</strong>
                 </div>
                 <div class="tide-row active">
                   <span>14:15</span>
-                  <span>High Tide</span>
+                  <span>{{ t('High Tide') }}</span>
                   <strong>2.1m</strong>
                 </div>
               </div>
             </div>
           </van-tab>
 
-          <van-tab title="Quiver" name="quiver">
+          <van-tab :title="t('Quiver')" name="quiver">
             <div class="mockup-content">
               <div v-for="board in QUIVER_MOCKS" :key="board.id" class="quiver-board-item">
                 <img :src="board.imageUrl" :alt="board.name" class="board-thumb" />
                 <div class="board-info">
                   <strong>{{ board.name }}</strong>
                   <span class="board-dims">{{ board.dims }} • {{ board.volume }}</span>
-                  <van-tag color="#06d6a0" text-color="#023e8a">{{ board.matchScore }}</van-tag>
+                  <van-tag color="#06d6a0" text-color="#023e8a">{{ board.id === 'hypto' ? t('98% match today') : t('92% match tomorrow') }}</van-tag>
                 </div>
               </div>
             </div>

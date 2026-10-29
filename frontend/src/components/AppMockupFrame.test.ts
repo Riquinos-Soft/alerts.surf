@@ -1,9 +1,11 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { beforeEach, describe, it, expect } from 'vitest'
 import AppMockupFrame from './AppMockupFrame.vue'
 import Vant from 'vant'
+import { setLocale } from '../composables/useLocale'
 
 describe('AppMockupFrame', () => {
+  beforeEach(() => setLocale('en'))
   it('renders phone frame and interactive spot selector', async () => {
     const wrapper = mount(AppMockupFrame, {
       global: {

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from 'vue'
 import AppMockupFrame from './AppMockupFrame.vue'
+import { useLocale } from '../composables/useLocale'
+
+const { t } = useLocale()
 
 const WaveCanvas3D = defineAsyncComponent(() => import('./WaveCanvas3D.vue'))
 const canRender3d = typeof WebGL2RenderingContext !== 'undefined'
@@ -60,34 +63,33 @@ function selectSpot(spot: SpotPreview) {
     <div class="container hero-container">
       <div class="hero-content">
         <div class="badge-pill active">
-          <van-tag type="primary" size="medium" round>✨ Live Ocean Intelligence</van-tag>
+          <van-tag type="primary" size="medium" round>{{ t('✨ Live Ocean Intelligence') }}</van-tag>
         </div>
 
         <h1 id="hero-title" class="hero-title">
-          Know exactly when and where <span class="gradient-text">the ocean turns on.</span>
+          {{ t('Know exactly when and where') }} <span class="gradient-text">{{ t('the ocean turns on.') }}</span>
         </h1>
 
         <p class="hero-description">
-          Hyper-local swell dynamics, 3D ocean simulation, high-resolution wind vectors, and an agentic AI assistant
-          that understands your quiver and spots like a local shaper.
+          {{ t('Hyper-local swell dynamics, 3D ocean simulation, high-resolution wind vectors, and an agentic AI assistant that understands your quiver and spots like a local shaper.') }}
         </p>
 
         <div class="hero-actions">
           <a href="#forecast-showcase" class="btn-primary">
-            <span>Explore Intelligence</span>
+            <span>{{ t('Explore Intelligence') }}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </a>
           <a href="#agent-vision" class="btn-secondary">
-            <span>Discover Surf Agent</span>
+            <span>{{ t('Discover Surf Agent') }}</span>
           </a>
         </div>
 
         <!-- Live Spot Radar Card -->
         <div class="radar-card glass-panel">
           <div class="radar-header">
-            <div class="spot-selector" role="tablist" aria-label="Sample Spots">
+            <div class="spot-selector" role="tablist" :aria-label="t('Sample spots')">
               <button
                 v-for="spot in spots"
                 :key="spot.id"
@@ -102,44 +104,44 @@ function selectSpot(spot: SpotPreview) {
             </div>
             <div class="live-pill">
               <span class="live-indicator" aria-hidden="true" />
-              <span>LIVE SWELL TELEMETRY</span>
+              <span>{{ t('LIVE SWELL TELEMETRY') }}</span>
             </div>
           </div>
 
           <div class="radar-main">
             <div class="spot-info">
-              <span class="spot-region">{{ activeSpot.region }}</span>
+              <span class="spot-region">{{ activeSpot.region === 'Basque Country' ? t('Basque Country') : activeSpot.region }}</span>
               <h2 class="spot-name">{{ activeSpot.name }}</h2>
             </div>
             <div class="score-badge">
               <div class="score-value">{{ activeSpot.score }}</div>
               <div class="score-meta">
                 <span class="score-out">/ 10</span>
-                <span class="score-condition">{{ activeSpot.quality }}</span>
+                <span class="score-condition">{{ activeSpot.quality === 'Firing' ? t('Firing') : t('Clean & Peeling') }}</span>
               </div>
             </div>
           </div>
 
           <div class="metrics-grid">
             <div class="metric-box">
-              <span class="metric-title">Primary Swell</span>
+              <span class="metric-title">{{ t('Primary Swell') }}</span>
               <div class="metric-val">{{ activeSpot.swell }}</div>
-              <span class="metric-sub">Period: {{ activeSpot.period }}</span>
+              <span class="metric-sub">{{ t('Period:') }} {{ activeSpot.period }}</span>
             </div>
             <div class="metric-box">
-              <span class="metric-title">Local Wind</span>
-              <div class="metric-val text-accent">{{ activeSpot.wind }}</div>
-              <span class="metric-sub">Favorable texture</span>
+              <span class="metric-title">{{ t('Local Wind') }}</span>
+              <div class="metric-val text-accent">{{ activeSpot.id === 'mundaka' ? t('7 kts Offshore (SSW)') : t('5 kts Light Cross (E)') }}</div>
+              <span class="metric-sub">{{ t('Favorable texture') }}</span>
             </div>
             <div class="metric-box">
-              <span class="metric-title">Tide Window</span>
-              <div class="metric-val">{{ activeSpot.tide }}</div>
-              <span class="metric-sub">Optimal window</span>
+              <span class="metric-title">{{ t('Tide Window') }}</span>
+              <div class="metric-val">{{ activeSpot.id === 'mundaka' ? t('Low tide rising (+0.8m)') : t('Mid tide falling (+1.4m)') }}</div>
+              <span class="metric-sub">{{ t('Optimal window') }}</span>
             </div>
             <div class="metric-box highlighted">
-              <span class="metric-title">Agent Recommendation</span>
+              <span class="metric-title">{{ t('Agent Recommendation') }}</span>
               <div class="metric-val text-cyan">{{ activeSpot.recommendedBoard }}</div>
-              <span class="metric-sub">Matched to conditions</span>
+              <span class="metric-sub">{{ t('Matched to conditions') }}</span>
             </div>
           </div>
         </div>
@@ -147,23 +149,23 @@ function selectSpot(spot: SpotPreview) {
         <div class="hero-stats">
           <div class="stat-item">
             <span class="stat-number">100%</span>
-            <span class="stat-label">Independent Forecast</span>
+            <span class="stat-label">{{ t('Independent Forecast') }}</span>
           </div>
           <div class="stat-divider" aria-hidden="true" />
           <div class="stat-item">
             <span class="stat-number">15 min</span>
-            <span class="stat-label">Model Updates</span>
+            <span class="stat-label">{{ t('Model Updates') }}</span>
           </div>
           <div class="stat-divider" aria-hidden="true" />
           <div class="stat-item">
-            <span class="stat-number">Voice & Chat</span>
-            <span class="stat-label">Agentic Ready</span>
+            <span class="stat-number">{{ t('Voice & Chat') }}</span>
+            <span class="stat-label">{{ t('Agentic Ready') }}</span>
           </div>
         </div>
       </div>
 
       <!-- App Mockup in right column -->
-      <div class="hero-visual" aria-label="Interactive App Experience">
+      <div class="hero-visual" :aria-label="t('Interactive app experience')">
         <AppMockupFrame />
       </div>
     </div>
@@ -180,7 +182,7 @@ function selectSpot(spot: SpotPreview) {
 
 .hero-container {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 3rem;
   align-items: center;
   position: relative;
@@ -198,6 +200,11 @@ function selectSpot(spot: SpotPreview) {
   flex-direction: column;
   align-items: flex-start;
   gap: 1.5rem;
+  min-width: 0;
+}
+
+.hero-visual {
+  min-width: 0;
 }
 
 .hero-title {
@@ -384,7 +391,7 @@ function selectSpot(spot: SpotPreview) {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
@@ -416,6 +423,27 @@ function selectSpot(spot: SpotPreview) {
   font-size: 0.98rem;
   font-weight: 700;
   color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1199px) {
+  .hero-section {
+    padding-top: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-stats {
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    flex: 1 1 40%;
+  }
+
+  .stat-divider {
+    display: none;
+  }
 }
 
 .text-accent {

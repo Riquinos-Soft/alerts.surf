@@ -1,22 +1,33 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useAuth } from '../../composables/useAuth'
+import { useLocale } from '../../composables/useLocale'
+import LanguageSwitch from '../LanguageSwitch.vue'
 
 const { getAuthHeader, logout } = useAuth()
+const { t } = useLocale()
 const emit = defineEmits<{
   (e: 'logout'): void
 }>()
 
 const sections = [
-  { id: 'playas', label: 'Playas', icon: 'location-o' },
-  { id: 'mareas', label: 'Mareas', icon: 'clock-o' },
-  { id: 'tablas', label: 'Tablas', icon: 'notes-o' },
-  { id: 'alertas', label: 'Alertas', icon: 'bell' },
+  { id: 'playas', label: 'Beaches', icon: 'location-o' },
+  { id: 'mareas', label: 'Tides', icon: 'clock-o' },
+  { id: 'tablas', label: 'Boards', icon: 'notes-o' },
+  { id: 'alertas', label: 'Alerts', icon: 'bell' },
 ] as const
 
 const activeIndex = ref(0)
 const summary = ref<any>(null)
-const error = ref('')
+const error = ref(false)
+
+function translateKnownValue(value: string): string {
+  if (value === 'active') return t('active')
+  if (value === 'inactive') return t('inactive')
+  if (value === 'rising') return t('rising')
+  if (value === 'falling') return t('falling')
+  return value
+}
 
 function handleMenuKeydown(event: KeyboardEvent, index: number) {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -32,8 +43,8 @@ onMounted(async () => {
     })
     if (!res.ok) throw new Error('Failed to fetch dashboard')
     summary.value = await res.json()
-  } catch (err: any) {
-    error.value = err.message
+  } catch {
+    error.value = true
   }
 })
 
@@ -54,19 +65,20 @@ const handleLogout = async () => {
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-      <h1>Surfer Dashboard</h1>
+      <h1>{{ t('Surfer Dashboard') }}</h1>
+      <LanguageSwitch />
       <button type="button" @click="handleLogout" data-test="logout-btn" class="btn-logout">
-        Logout
+        {{ t('Logout') }}
       </button>
     </header>
 
     <div class="dashboard-layout">
-      <nav class="desktop-navigation" aria-label="Dashboard sections">
+      <nav class="desktop-navigation" :aria-label="t('Dashboard sections')">
         <van-sidebar v-model="activeIndex">
           <van-sidebar-item
             v-for="(section, index) in sections"
             :key="section.id"
-            :title="section.label"
+            :title="t(section.label)"
             :data-test="`sidebar-${section.id}`"
             @keydown="handleMenuKeydown($event, index)"
           />
@@ -74,24 +86,24 @@ const handleLogout = async () => {
       </nav>
 
       <main class="dashboard-main">
-        <div v-if="error" class="error" role="alert">{{ error }}</div>
-        <div v-else-if="!summary" class="loading" role="status">Loading...</div>
-        <div v-else class="panel" role="tabpanel" :aria-label="sections[activeIndex]!.label">
+        <div v-if="error" class="error" role="alert">{{ t('Unable to load dashboard') }}</div>
+        <div v-else-if="!summary" class="loading" role="status">{{ t('Loading...') }}</div>
+        <div v-else class="panel" role="tabpanel" :aria-label="t(sections[activeIndex]!.label)">
           <div v-if="activeIndex === 0" data-test="panel-playas">
-            <h2>Playas</h2>
+            <h2>{{ t('Beaches') }}</h2>
             <ul>
               <li v-for="beach in summary.beaches" :key="beach.id">
-                {{ beach.name }} - Score: {{ beach.condition_score }} ({{ beach.swell }}, {{ beach.wind }})
+                {{ beach.name }} - {{ t('Score:') }} {{ beach.condition_score }} ({{ beach.swell }}, {{ beach.wind }})
               </li>
             </ul>
           </div>
           <div v-else-if="activeIndex === 1" data-test="panel-mareas">
-            <h2>Mareas</h2>
-            <p>Current: {{ summary.tides.current_level }} ({{ summary.tides.trend }})</p>
-            <p>High: {{ summary.tides.next_high }} | Low: {{ summary.tides.next_low }}</p>
+            <h2>{{ t('Tides') }}</h2>
+            <p>{{ t('Current:') }} {{ summary.tides.current_level }} ({{ translateKnownValue(summary.tides.trend) }})</p>
+            <p>{{ t('High:') }} {{ summary.tides.next_high }} | {{ t('Low:') }} {{ summary.tides.next_low }}</p>
           </div>
           <div v-else-if="activeIndex === 2" data-test="panel-tablas">
-            <h2>Tablas</h2>
+            <h2>{{ t('Boards') }}</h2>
             <ul>
               <li v-for="board in summary.quiver" :key="board.id">
                 {{ board.model }} ({{ board.length }}, {{ board.volume }}L)
@@ -99,10 +111,10 @@ const handleLogout = async () => {
             </ul>
           </div>
           <div v-else data-test="panel-alertas">
-            <h2>Alertas</h2>
+            <h2>{{ t('Alerts') }}</h2>
             <ul>
               <li v-for="alert in summary.alerts" :key="alert.id">
-                {{ alert.rule }} - {{ alert.status }}
+                {{ alert.rule }} - {{ translateKnownValue(alert.status) }}
               </li>
             </ul>
           </div>
@@ -110,7 +122,7 @@ const handleLogout = async () => {
       </main>
     </div>
 
-    <nav class="mobile-navigation" aria-label="Dashboard sections">
+    <nav class="mobile-navigation" :aria-label="t('Dashboard sections')">
       <van-tabbar v-model="activeIndex" :fixed="true" :safe-area-inset-bottom="true">
         <van-tabbar-item
           v-for="(section, index) in sections"
@@ -120,7 +132,7 @@ const handleLogout = async () => {
           :data-test="`tab-${section.id}`"
           @keydown="handleMenuKeydown($event, index)"
         >
-          {{ section.label }}
+          {{ t(section.label) }}
         </van-tabbar-item>
       </van-tabbar>
     </nav>
@@ -138,6 +150,7 @@ const handleLogout = async () => {
 
 .dashboard-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -145,7 +158,14 @@ const handleLogout = async () => {
 }
 
 .dashboard-header h1 {
+  flex: 1 1 100%;
   font-size: clamp(1.35rem, 4vw, 2rem);
+}
+
+@media (min-width: 480px) {
+  .dashboard-header h1 {
+    flex: 1;
+  }
 }
 
 .dashboard-layout {
