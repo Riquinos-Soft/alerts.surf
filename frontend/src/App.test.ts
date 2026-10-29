@@ -173,7 +173,7 @@ describe('App', () => {
     
     // 4. Authenticated state: should hide landing, show dashboard
     expect(wrapper.find('.dashboard').exists()).toBe(true)
-    expect(wrapper.find('.landing-shell main').exists()).toBe(false)
+    expect(wrapper.find('.landing-shell > main').exists()).toBe(false)
     
     // 5. Logout
     await wrapper.find('[data-test="logout-btn"]').trigger('click')
